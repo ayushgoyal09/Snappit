@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Snappit</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="login">Login</string>
+    <string name="username_hint">Username</string>
+    <string name="forgot_pass">Forgot your Password?</string>
+    <string name="sign_up">Sign Up!</string>
+    <string name="password_hint">Password</string>
+    <string name="logo">logo</string>
+
+</resources>
