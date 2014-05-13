@@ -10,5 +10,8 @@
     <string name="sign_up">Sign Up!</string>
     <string name="password_hint">Password</string>
     <string name="logo">logo</string>
+    <string name="register">Sign up for a Snappit account</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="email_hint">Enter your email</string>
 
 </resources>

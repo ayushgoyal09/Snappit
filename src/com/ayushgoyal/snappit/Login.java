@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Login extends Activity implements OnClickListener {
@@ -24,19 +26,11 @@ public class Login extends Activity implements OnClickListener {
 	private EditText username, password;
 	private String user, pass;
 	private ProgressDialog pDialog;
-
-	public String getUser() {
-		return user;
-	}
-
-	public String getPass() {
-		return pass;
-	}
-
-	JSONParser jsonParser = new JSONParser();
-	private static final String LOGIN_URL = "http://192.168.1.4/webservice/login.php";
+	private TextView signUp;
+//	private static final String LOGIN_URL = "http://192.168.1.4/webservice/login.php";
+	private static final String LOGIN_URL = "http://www.ayushgoyal09.com/webservice/login.php";
 	private static final String TAG_RESULT = "result";
-	private static final String TAG_MESSAGE = "message";
+	JSONParser jsonParser = new JSONParser();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +39,8 @@ public class Login extends Activity implements OnClickListener {
 		setContentView(R.layout.login);
 		loginButton = (Button) findViewById(R.id.login_button);
 		loginButton.setOnClickListener(this);
+		signUp = (TextView) findViewById(R.id.sign_up);
+		signUp.setOnClickListener(this);
 		username = (EditText) findViewById(R.id.username);
 		password = (EditText) findViewById(R.id.password);
 
@@ -53,17 +49,27 @@ public class Login extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		user = username.getText().toString();
-		pass = password.getText().toString();
-		if (checkForCredentials()) {
-			Toast.makeText(getApplicationContext(), "COOL", Toast.LENGTH_SHORT)
-					.show();
-			new AttemptLogin().execute();
+		switch (v.getId()) {
+
+		case R.id.login_button:
+			user = username.getText().toString();
+			pass = password.getText().toString();
+			if (checkForCredentials()) {
+				new AttemptLogin().execute();
+			}
+			break;
+
+		case R.id.sign_up:
+			Intent intent = new Intent(this, Signup.class);
+			startActivity(intent);
+			break;
 		}
+
 	}
 
 	public boolean checkForCredentials() {
 		Log.d("Credentials", "username :" + user + "\npassword :" + pass);
+		// Log.d("IP Address", myIP);
 		if (user.equals("") && pass.equals("")) {
 			Toast.makeText(getApplicationContext(),
 					"Username and password cannot be left blank!",
@@ -81,7 +87,7 @@ public class Login extends Activity implements OnClickListener {
 			return true;
 	}
 
-	class AttemptLogin extends AsyncTask<String, String, String> {
+	class AttemptLogin extends AsyncTask<String, String, Integer> {
 
 		/**
 		 * Before starting background thread Show Progress Dialog
@@ -99,7 +105,7 @@ public class Login extends Activity implements OnClickListener {
 		}
 
 		@Override
-		protected String doInBackground(String... params) {
+		protected Integer doInBackground(String... params) {
 			// TODO Auto-generated method stub
 
 			int result = 0;
@@ -119,10 +125,10 @@ public class Login extends Activity implements OnClickListener {
 				Log.d("result", "is : " + result);
 				if (result == 1) {
 					Log.d("Login Successful!", json.toString());
-					return json.getString(TAG_MESSAGE);
+					return 1;
 				} else if (result == 0) {
 					Log.d("Login Failure", json.toString());
-					return json.getString(TAG_MESSAGE);
+					return 0;
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -132,11 +138,21 @@ public class Login extends Activity implements OnClickListener {
 			return null;
 		}
 
-		protected void onPostExecute(String file_url) {
+		protected void onPostExecute(Integer res) {
 			// dismiss the dialog once product deleted
 			pDialog.dismiss();
-			if (file_url != null) {
-				Toast.makeText(Login.this, file_url, Toast.LENGTH_LONG).show();
+			switch (res) {
+			case 0:
+				Toast.makeText(Login.this, "Login Failed", Toast.LENGTH_LONG)
+						.show();
+				break;
+
+			case 1:
+				Intent intent = new Intent(getApplicationContext(),
+						Snappit.class);
+				startActivity(intent);
+				Toast.makeText(Login.this, "Welcome "+user, Toast.LENGTH_LONG).show();
+				break;
 			}
 
 		}
