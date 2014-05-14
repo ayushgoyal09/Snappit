@@ -1,12 +1,22 @@
 package com.ayushgoyal.snappit;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -18,9 +28,12 @@ import android.widget.Toast;
 
 public class Snappit extends Activity implements OnClickListener {
 
+	private ProgressDialog pDialog;
+	private static final String URL = "http://www.ayushgoyal09.com/webservice/upload_image.php";
 	private static final int MEDIA_TYPE_IMAGE = 1;
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-	private static String mCurrentPhotoPath; // File path to the last image captured
+	private static String mCurrentPhotoPath; // File path to the last image
+												// captured
 	private Uri fileUri;
 	private Button takePictureButton;
 
@@ -67,7 +80,6 @@ public class Snappit extends Activity implements OnClickListener {
 			e.printStackTrace();
 		}
 
-
 	}
 
 	@Override
@@ -82,6 +94,7 @@ public class Snappit extends Activity implements OnClickListener {
 					Uri contentUri = Uri.fromFile(f);
 					mediaScanIntent.setData(contentUri);
 					this.sendBroadcast(mediaScanIntent);
+					new UploadImage().execute();
 
 					// Image captured and saved to fileUri specified in the
 					// Intent
@@ -164,6 +177,102 @@ public class Snappit extends Activity implements OnClickListener {
 
 		// get the file url
 		fileUri = savedInstanceState.getParcelable("file_uri");
+	}
+
+	class UploadImage extends AsyncTask<String, String, String> {
+
+		/**
+		 * Before starting background thread Show Progress Dialog
+		 * */
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = new ProgressDialog(Snappit.this);
+			pDialog.setMessage("Uploading Image...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(true);
+			pDialog.show();
+		}
+
+		@Override
+		protected String doInBackground(String... arg0) {
+			HttpURLConnection connection = null;
+			DataOutputStream outputStream = null;
+			DataInputStream inputStream = null;
+			String lineEnd = "\r\n";
+			String twoHyphens = "--";
+			String boundary = "*****";
+			int bytesRead, bytesAvailable, bufferSize;
+			byte[] buffer;
+			int maxBufferSize = 1 * 1024 * 1024;
+
+			try {
+				FileInputStream fileInputStream = new FileInputStream(
+						mCurrentPhotoPath);
+				URL url = new URL(URL);
+				connection = (HttpURLConnection) url.openConnection();
+				connection.setDoInput(true);
+				connection.setDoOutput(true);
+				connection.setUseCaches(false);
+				// Set HTTP method to POST.
+				connection.setRequestMethod("POST");
+				connection.setRequestProperty("Connection", "Keep-Alive");
+				connection.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
+				outputStream = new DataOutputStream(connection.getOutputStream());
+				outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+				outputStream.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + mCurrentPhotoPath +"\"" + lineEnd);
+				outputStream.writeBytes(lineEnd);
+				bytesAvailable = fileInputStream.available();
+			    bufferSize = Math.min(bytesAvailable, maxBufferSize);
+			    buffer = new byte[bufferSize];
+			 // Read file
+			    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+			    while (bytesRead > 0)
+			    {
+			        outputStream.write(buffer, 0, bufferSize);
+			        bytesAvailable = fileInputStream.available();
+			        bufferSize = Math.min(bytesAvailable, maxBufferSize);
+			        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+			    }
+			 
+			    outputStream.writeBytes(lineEnd);
+			    outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+			 
+			    // Responses from the server (code and message)
+			    int serverResponseCode = connection.getResponseCode();
+			    String serverResponseMessage = connection.getResponseMessage();
+			    Log.i("Response iMage",serverResponseMessage+"  "+serverResponseCode);
+			 
+			    fileInputStream.close();
+			    outputStream.flush();
+			    outputStream.close();
+			    
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		/**
+		 * After completing background task Dismiss the progress dialog
+		 * **/
+		protected void onPostExecute(String file_url) {
+			// dismiss the dialog once done
+			pDialog.dismiss();
+			Toast toast = Toast.makeText(getApplicationContext(),
+					"Image added Successfully!", Toast.LENGTH_SHORT);
+			toast.show();
+
+		}
+
 	}
 
 }
