@@ -6,15 +6,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.ayushgoyal.snappit.adapters.ThumbnailAdapter;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,26 +29,32 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.Toast;
 
 public class Snappit extends Activity implements OnClickListener {
 
 	private ProgressDialog pDialog;
 	private static final String URL = "http://www.ayushgoyal09.com/webservice/upload_image.php";
+	private static final String testImageURL = "http://www.ayushgoyal09.com/webservice/uploadss/IMG_20140513_224902.jpg";
 	private static final int MEDIA_TYPE_IMAGE = 1;
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	private static String mCurrentPhotoPath; // File path to the last image
 												// captured
 	private Uri fileUri;
+	GridView thumbnails;
 	private Button takePictureButton;
+	public static Bitmap testImage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home_screen);
+		thumbnails = (GridView) findViewById(R.id.image_grid);
 		takePictureButton = (Button) findViewById(R.id.camera_button);
 		takePictureButton.setOnClickListener(this);
+		new DisplayImages().execute();
 
 	}
 
@@ -217,36 +228,41 @@ public class Snappit extends Activity implements OnClickListener {
 				// Set HTTP method to POST.
 				connection.setRequestMethod("POST");
 				connection.setRequestProperty("Connection", "Keep-Alive");
-				connection.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
-				outputStream = new DataOutputStream(connection.getOutputStream());
+				connection.setRequestProperty("Content-Type",
+						"multipart/form-data;boundary=" + boundary);
+				outputStream = new DataOutputStream(
+						connection.getOutputStream());
 				outputStream.writeBytes(twoHyphens + boundary + lineEnd);
-				outputStream.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + mCurrentPhotoPath +"\"" + lineEnd);
+				outputStream
+						.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\""
+								+ mCurrentPhotoPath + "\"" + lineEnd);
 				outputStream.writeBytes(lineEnd);
 				bytesAvailable = fileInputStream.available();
-			    bufferSize = Math.min(bytesAvailable, maxBufferSize);
-			    buffer = new byte[bufferSize];
-			 // Read file
-			    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-			    while (bytesRead > 0)
-			    {
-			        outputStream.write(buffer, 0, bufferSize);
-			        bytesAvailable = fileInputStream.available();
-			        bufferSize = Math.min(bytesAvailable, maxBufferSize);
-			        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-			    }
-			 
-			    outputStream.writeBytes(lineEnd);
-			    outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-			 
-			    // Responses from the server (code and message)
-			    int serverResponseCode = connection.getResponseCode();
-			    String serverResponseMessage = connection.getResponseMessage();
-			    Log.i("Response iMage",serverResponseMessage+"  "+serverResponseCode);
-			 
-			    fileInputStream.close();
-			    outputStream.flush();
-			    outputStream.close();
-			    
+				bufferSize = Math.min(bytesAvailable, maxBufferSize);
+				buffer = new byte[bufferSize];
+				// Read file
+				bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+				while (bytesRead > 0) {
+					outputStream.write(buffer, 0, bufferSize);
+					bytesAvailable = fileInputStream.available();
+					bufferSize = Math.min(bytesAvailable, maxBufferSize);
+					bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+				}
+
+				outputStream.writeBytes(lineEnd);
+				outputStream.writeBytes(twoHyphens + boundary + twoHyphens
+						+ lineEnd);
+
+				// Responses from the server (code and message)
+				int serverResponseCode = connection.getResponseCode();
+				String serverResponseMessage = connection.getResponseMessage();
+				Log.i("Response iMage", serverResponseMessage + "  "
+						+ serverResponseCode);
+
+				fileInputStream.close();
+				outputStream.flush();
+				outputStream.close();
+
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -275,4 +291,38 @@ public class Snappit extends Activity implements OnClickListener {
 
 	}
 
+	class DisplayImages extends AsyncTask<String, String, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			URL url;
+			try {
+				url = new URL(testImageURL);
+				HttpURLConnection connection = (HttpURLConnection) url
+						.openConnection();
+				connection.setDoInput(true);
+				connection.connect();
+				InputStream input = connection.getInputStream();
+				testImage = BitmapFactory.decodeStream(input);
+
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return null;
+
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			thumbnails.setAdapter(new ThumbnailAdapter(Snappit.this));
+
+		}
+	}
 }
