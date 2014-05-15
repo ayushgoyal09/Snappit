@@ -11,9 +11,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-
-import com.ayushgoyal.snappit.adapters.ThumbnailAdapter;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -32,11 +31,17 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.ayushgoyal.snappit.adapters.ThumbnailAdapter;
+
 public class Snappit extends Activity implements OnClickListener {
 
 	private ProgressDialog pDialog;
 	private static final String URL = "http://www.ayushgoyal09.com/webservice/upload_image.php";
-	private static final String testImageURL = "http://www.ayushgoyal09.com/webservice/uploadss/IMG_20140513_224902.jpg";
+	private static String [] testImageURL = {
+			"http://www.ayushgoyal09.com/webservice/uploadss/IMG_20140513_224902.jpg",
+			"http://www.ayushgoyal09.com/webservice/uploadss/IMG_20140514_200659.jpg" };
+	
+	
 	private static final int MEDIA_TYPE_IMAGE = 1;
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	private static String mCurrentPhotoPath; // File path to the last image
@@ -45,17 +50,20 @@ public class Snappit extends Activity implements OnClickListener {
 	GridView thumbnails;
 	private Button takePictureButton;
 	public static Bitmap testImage;
+	public static ArrayList<Bitmap> allImages = new ArrayList<Bitmap>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home_screen);
+		Log.i("size of images",""+ testImageURL.length);
 		thumbnails = (GridView) findViewById(R.id.image_grid);
 		takePictureButton = (Button) findViewById(R.id.camera_button);
 		takePictureButton.setOnClickListener(this);
 		new DisplayImages().execute();
-
+		
+		
 	}
 
 	@Override
@@ -297,13 +305,20 @@ public class Snappit extends Activity implements OnClickListener {
 		protected String doInBackground(String... params) {
 			URL url;
 			try {
-				url = new URL(testImageURL);
+				int i=0;
+				while(i<testImageURL.length){
+					
+				
+				url = new URL(testImageURL[i]);
 				HttpURLConnection connection = (HttpURLConnection) url
 						.openConnection();
 				connection.setDoInput(true);
 				connection.connect();
 				InputStream input = connection.getInputStream();
-				testImage = BitmapFactory.decodeStream(input);
+				//testImage = BitmapFactory.decodeStream(input);
+				allImages.add(BitmapFactory.decodeStream(input));
+				i++;
+				}
 
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block

@@ -20,7 +20,7 @@ public class ThumbnailAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		return 1;
+		return Snappit.allImages.size();
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class ThumbnailAdapter extends BaseAdapter {
             imageView = (ImageView) view;
         }
 
-        imageView.setImageBitmap(Snappit.testImage);
+        imageView.setImageBitmap(Snappit.allImages.get(pos));
         return imageView;
 		
 	}
