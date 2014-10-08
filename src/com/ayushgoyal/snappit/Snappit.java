@@ -306,7 +306,14 @@ public class Snappit extends Activity implements OnClickListener {
 			Toast toast = Toast.makeText(getApplicationContext(),
 					"Image added Successfully!", Toast.LENGTH_SHORT);
 			toast.show();
-			new ThumbnailAdapter(getApplicationContext()).notifyDataSetChanged();
+			runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					new ThumbnailAdapter(getApplicationContext()).notifyDataSetChanged();
+					
+				}
+			});
 
 		}
 
@@ -330,10 +337,12 @@ public class Snappit extends Activity implements OnClickListener {
 						JSONObject device = images.getJSONObject(i);
 						String name = UPLOADS_FOLDER+device.getString("name");
 						Log.i("image",name);
+						if(!image_urls.contains(name)){
+						
 						image_urls.add(name);
 
 						Log.i("Imagelog: ", image_urls.get(i).toString());
-
+						}
 					}
 
 				}
