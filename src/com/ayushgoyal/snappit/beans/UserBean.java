@@ -1,6 +1,8 @@
 package com.ayushgoyal.snappit.beans;
 
-public class UserBean {
+import java.io.Serializable;
+
+public class UserBean implements Serializable{
 	String username;
 	String password;
 	String email;
