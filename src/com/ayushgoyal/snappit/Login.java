@@ -151,6 +151,7 @@ public class Login extends Activity implements OnClickListener {
 			case 1:
 				Intent intent = new Intent(getApplicationContext(),
 						Albums.class);
+				intent.putExtra("user", user);
 				startActivity(intent);
 				Toast.makeText(Login.this, "Welcome "+user.getUsername(), Toast.LENGTH_LONG).show();
 				break;
