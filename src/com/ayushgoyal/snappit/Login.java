@@ -8,6 +8,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ayushgoyal.snappit.beans.UserBean;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -24,10 +26,9 @@ import android.widget.Toast;
 public class Login extends Activity implements OnClickListener {
 	private Button loginButton;
 	private EditText username, password;
-	private String user, pass;
+	private UserBean user = new UserBean();
 	private ProgressDialog pDialog;
 	private TextView signUp;
-//	private static final String LOGIN_URL = "http://192.168.1.4/webservice/login.php";
 	private static final String LOGIN_URL = "http://www.ayushgoyal09.com/webservice/login.php";
 	private static final String TAG_RESULT = "result";
 	JSONParser jsonParser = new JSONParser();
@@ -52,8 +53,8 @@ public class Login extends Activity implements OnClickListener {
 		switch (v.getId()) {
 
 		case R.id.login_button:
-			user = username.getText().toString();
-			pass = password.getText().toString();
+			user.setUsername(username.getText().toString());
+			user.setPassword(password.getText().toString());
 			if (checkForCredentials()) {
 				new AttemptLogin().execute();
 			}
@@ -68,18 +69,18 @@ public class Login extends Activity implements OnClickListener {
 	}
 
 	public boolean checkForCredentials() {
-		Log.d("Credentials", "username :" + user + "\npassword :" + pass);
+		Log.d("Credentials", "username :" + user.getUsername() + "\npassword :" + user.getPassword());
 		// Log.d("IP Address", myIP);
-		if (user.equals("") && pass.equals("")) {
+		if (user.getUsername().equals("") && user.getPassword().equals("")) {
 			Toast.makeText(getApplicationContext(),
 					"Username and password cannot be left blank!",
 					Toast.LENGTH_SHORT).show();
 			return false;
-		} else if (user.equals("")) {
+		} else if (user.getUsername().equals("")) {
 			Toast.makeText(getApplicationContext(),
 					"Please enter the username", Toast.LENGTH_SHORT).show();
 			return false;
-		} else if (pass.equals("")) {
+		} else if (user.getPassword().equals("")) {
 			Toast.makeText(getApplicationContext(),
 					"Please enter the password", Toast.LENGTH_SHORT).show();
 			return false;
@@ -111,9 +112,9 @@ public class Login extends Activity implements OnClickListener {
 			int result = 0;
 			try {
 				List<NameValuePair> args = new ArrayList<NameValuePair>();
-				args.add(new BasicNameValuePair("username", user));
-				args.add(new BasicNameValuePair("password", pass));
-				Log.d("request!", "starting" + user + pass);
+				args.add(new BasicNameValuePair("username", user.getUsername()));
+				args.add(new BasicNameValuePair("password", user.getPassword()));
+				Log.d("request!", "starting" + user.getUsername() + user.getPassword());
 				// getting product details by making HTTP request
 				JSONObject json = jsonParser.makeHttpRequest(LOGIN_URL, "POST",
 						args);
@@ -149,9 +150,9 @@ public class Login extends Activity implements OnClickListener {
 
 			case 1:
 				Intent intent = new Intent(getApplicationContext(),
-						Snappit.class);
+						Albums.class);
 				startActivity(intent);
-				Toast.makeText(Login.this, "Welcome "+user, Toast.LENGTH_LONG).show();
+				Toast.makeText(Login.this, "Welcome "+user.getUsername(), Toast.LENGTH_LONG).show();
 				break;
 			}
 
