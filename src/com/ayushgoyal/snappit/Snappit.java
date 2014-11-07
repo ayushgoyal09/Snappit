@@ -48,13 +48,7 @@ public class Snappit extends Activity implements OnClickListener {
 	private static final String TAG_SUCCESS = "success";
 	private static final String TAG_IMAGES = "images";
 	JSONArray images;
-
-	// private static String [] testImageURL = {
-	// "http://www.ayushgoyal09.com/webservice/uploadss/IMG_20140513_224902.jpg",
-	// "http://www.ayushgoyal09.com/webservice/uploadss/IMG_20140514_200659.jpg"
-	// };
 	private static ArrayList<String> image_urls = new ArrayList<String>();
-
 	private static final int MEDIA_TYPE_IMAGE = 1;
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	private static String mCurrentPhotoPath; // File path to the last image
