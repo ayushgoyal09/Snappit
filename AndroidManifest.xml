@@ -34,7 +34,7 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.ayushgoyal.snappit.Albums"
+            android:name="com.ayushgoyal.snappit.album.Albums"
             android:label="@string/app_name" >
         </activity>
         <activity

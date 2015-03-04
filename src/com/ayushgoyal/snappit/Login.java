@@ -8,6 +8,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ayushgoyal.snappit.album.Albums;
 import com.ayushgoyal.snappit.beans.UserBean;
 
 import android.app.Activity;
