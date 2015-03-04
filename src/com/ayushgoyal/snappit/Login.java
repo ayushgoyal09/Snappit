@@ -5,11 +5,9 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.ayushgoyal.snappit.album.Albums;
-import com.ayushgoyal.snappit.beans.UserBean;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -23,6 +21,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.ayushgoyal.snappit.album.Albums;
+import com.ayushgoyal.snappit.beans.AlbumBean;
+import com.ayushgoyal.snappit.beans.UserBean;
+import com.ayushgoyal.snappit.util.Constants;
 
 public class Login extends Activity implements OnClickListener {
 	private Button loginButton;
@@ -150,13 +153,67 @@ public class Login extends Activity implements OnClickListener {
 				break;
 
 			case 1:
-				Intent intent = new Intent(getApplicationContext(),
-						Albums.class);
-				intent.putExtra("user", user);
-				startActivity(intent);
+
 				Toast.makeText(Login.this, "Welcome "+user.getUsername(), Toast.LENGTH_LONG).show();
+				new GetAlbums().execute(user);
 				break;
 			}
+
+		}
+
+	}
+	
+	class GetAlbums extends AsyncTask<UserBean, String, Void> {
+		ProgressDialog pDialog = new ProgressDialog(Login.this);
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog.setMessage("Getting your Albums...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(true);
+			pDialog.show();
+		}
+
+		@Override
+		protected Void doInBackground(UserBean... users) {
+			List<NameValuePair> args = new ArrayList<NameValuePair>();
+			List<AlbumBean> albumBeans = new ArrayList<AlbumBean>();
+			args.add(new BasicNameValuePair("users_id", users[0].getUsername()));
+			Log.i("ALBUM REQUEST FOR USER : ", users[0].getUsername());
+			JSONObject json = new JSONParser().makeHttpRequest(
+					Constants.GET_ALBUMS_URL, "POST", args);
+			Log.i("ALBUMS", json.toString());
+			int success = 0;
+			try {
+				success = json.getInt(Constants.TAG_SUCCESS);
+				if(success==1){
+					JSONArray albumsArray = json.getJSONArray("albums");
+					for(int i=0;i<albumsArray.length();i++){
+						JSONObject album = albumsArray.getJSONObject(i);
+						Constants.ALBUM_LIST.add(new AlbumBean(album.getString("id"), album.getString("name")));
+					}
+					
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.i("Checkpoint", "1");
+			Log.i("Success", ""+success);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			
+			pDialog.dismiss();
+			Intent intent = new Intent(getApplicationContext(),
+			Albums.class);
+			intent.putExtra("user", user);
+			startActivity(intent);
 
 		}
 
