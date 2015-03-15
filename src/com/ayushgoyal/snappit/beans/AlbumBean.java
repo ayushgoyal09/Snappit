@@ -1,17 +1,22 @@
 package com.ayushgoyal.snappit.beans;
 
+import android.graphics.Bitmap;
+
 public class AlbumBean {
 	private String id;
 	private String name;
+	private Bitmap albumCover;
 	
 	/**
 	 * @param id
 	 * @param name
+	 * @param albumCover
 	 */
-	public AlbumBean(String id, String name) {
+	public AlbumBean(String id, String name, Bitmap albumCover) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.albumCover = albumCover;
 	}
 	
 	public String getId() {
@@ -25,6 +30,14 @@ public class AlbumBean {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Bitmap getAlbumCover() {
+		return albumCover;
+	}
+
+	public void setAlbumCover(Bitmap albumCover) {
+		this.albumCover = albumCover;
 	}
 	
 	
