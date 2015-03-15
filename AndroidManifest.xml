@@ -38,6 +38,10 @@
             android:label="@string/app_name" >
         </activity>
         <activity
+            android:name="com.ayushgoyal.snappit.image.FullScreenImage"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
             android:name="com.ayushgoyal.snappit.Signup"
             android:label="@string/app_name" >
         </activity>

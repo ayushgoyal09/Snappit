@@ -33,11 +33,14 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
 import com.ayushgoyal.snappit.adapters.ThumbnailAdapter;
+import com.ayushgoyal.snappit.image.FullScreenImage;
 
 public class Snappit extends Activity implements OnClickListener {
 
@@ -69,9 +72,18 @@ public class Snappit extends Activity implements OnClickListener {
 		takePictureButton = (Button) findViewById(R.id.camera_button);
 		takePictureButton.setOnClickListener(this);
 		new DisplayImages().execute();
+		thumbnails.setOnItemClickListener(new OnItemClickListener() {
 
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent intent = new Intent(getApplicationContext(), FullScreenImage.class);
+				intent.putExtra("position", position);
+				startActivity(intent);
+				
+			}
+		});
 	}
-
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
