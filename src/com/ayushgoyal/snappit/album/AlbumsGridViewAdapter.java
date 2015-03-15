@@ -4,19 +4,26 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.sax.StartElementListener;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ayushgoyal.snappit.R;
+import com.ayushgoyal.snappit.Snappit;
 
 public class AlbumsGridViewAdapter extends ArrayAdapter {
 	private Context context;
 	private int layoutResourceId;
 	private ArrayList data = new ArrayList();
+	ImageItem selectedItem;
+	String test[];
 
 	/**
 	 * @param context
@@ -32,7 +39,7 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		View row = convertView;
 		ViewHolder holder = null;
 
@@ -51,6 +58,22 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 		ImageItem item = (ImageItem) data.get(position);
 		holder.albumName.setText(item.getTitle());
 		holder.albumImage.setImageBitmap(item.getImage());
+		
+		selectedItem = item;
+		
+		row.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(context, "You Selected the Album: "+position, Toast.LENGTH_LONG).show();
+				Intent intent = new Intent(context, Snappit.class);
+				intent.putExtra("position", position);
+				context.startActivity(intent);
+				
+				
+			}
+		});
+		
 		return row;
 	}
 
