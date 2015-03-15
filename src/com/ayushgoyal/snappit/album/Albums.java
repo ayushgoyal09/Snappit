@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.ayushgoyal.snappit.R;
 import com.ayushgoyal.snappit.beans.AlbumBean;
@@ -27,26 +29,20 @@ public class Albums extends Activity {
 		GridView gridView = (GridView) findViewById(R.id.albums_grid);
 		AlbumsGridViewAdapter gridViewAdapter = new AlbumsGridViewAdapter(this,
 				R.layout.album_grid_item_layout, getData());
-		
 		gridView.setAdapter(gridViewAdapter);
 
-//		new GetAlbums().execute(user);
 	}
 
 	private ArrayList<ImageItem> getData() {
 		ArrayList<ImageItem> imageItems = new ArrayList<ImageItem>();
-		Bitmap Test1 = BitmapFactory.decodeResource(getResources(),
-				R.drawable.ic_launcher);
-		for(AlbumBean album: Constants.ALBUM_LIST){
-			imageItems.add(new ImageItem(Test1, album.getName()));
+		// Bitmap Test1 = BitmapFactory.decodeResource(getResources(),
+		// R.drawable.ic_launcher);
+		for (AlbumBean album : Constants.ALBUM_LIST) {
+			imageItems
+					.add(new ImageItem(album.getAlbumCover(), album.getName()));
 		}
-		
-		
-		
-		
+
 		return imageItems;
 	}
-
-	
 
 }
