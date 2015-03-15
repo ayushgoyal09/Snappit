@@ -26,6 +26,7 @@ import com.ayushgoyal.snappit.album.Albums;
 import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.beans.UserBean;
 import com.ayushgoyal.snappit.util.Constants;
+import com.ayushgoyal.snappit.util.ResourceUtil;
 
 public class Login extends Activity implements OnClickListener {
 	private Button loginButton;
@@ -156,6 +157,8 @@ public class Login extends Activity implements OnClickListener {
 
 				Toast.makeText(Login.this, "Welcome "+user.getUsername(), Toast.LENGTH_LONG).show();
 				new GetAlbums().execute(user);
+//				Intent intent = new Intent(getApplicationContext(), Snappit.class);
+//				startActivity(intent);
 				break;
 			}
 
@@ -191,7 +194,8 @@ public class Login extends Activity implements OnClickListener {
 					JSONArray albumsArray = json.getJSONArray("albums");
 					for(int i=0;i<albumsArray.length();i++){
 						JSONObject album = albumsArray.getJSONObject(i);
-						Constants.ALBUM_LIST.add(new AlbumBean(album.getString("id"), album.getString("name")));
+						Constants.ALBUM_LIST.add(new AlbumBean(album.getString("id"), album.getString("name"), ResourceUtil.getBitmapFromURL(album.getString("cover"))));
+//						Constants.ALBUM_LIST.add(new AlbumBean(album.getString("id"), album.getString("name")));
 					}
 					
 				}
