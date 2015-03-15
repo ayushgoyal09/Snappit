@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import com.ayushgoyal.snappit.adapters.ThumbnailAdapter;
 import com.ayushgoyal.snappit.image.FullScreenImage;
+import com.ayushgoyal.snappit.image.ImageSlidePagerActivity;
 
 public class Snappit extends Activity implements OnClickListener {
 
@@ -77,7 +78,8 @@ public class Snappit extends Activity implements OnClickListener {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Intent intent = new Intent(getApplicationContext(), FullScreenImage.class);
+//				Intent intent = new Intent(getApplicationContext(), FullScreenImage.class);
+				Intent intent = new Intent(getApplicationContext(), ImageSlidePagerActivity.class);
 				intent.putExtra("position", position);
 				startActivity(intent);
 				
