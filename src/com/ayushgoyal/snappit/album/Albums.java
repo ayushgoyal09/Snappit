@@ -6,6 +6,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -31,6 +34,29 @@ public class Albums extends Activity {
 				R.layout.album_grid_item_layout, getData());
 		gridView.setAdapter(gridViewAdapter);
 
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.action_albums, menu);
+		return super.onCreateOptionsMenu(menu);
+		
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case R.id.action_add:
+			Toast.makeText(getApplicationContext(), "Add an album", Toast.LENGTH_SHORT).show();
+			break;
+
+		default: return super.onOptionsItemSelected(item);
+			
+		}
+		return super.onOptionsItemSelected(item);
+		
 	}
 
 	private ArrayList<ImageItem> getData() {
