@@ -3,21 +3,23 @@ package com.ayushgoyal.snappit.album;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.Toast;
 
 import com.ayushgoyal.snappit.R;
 import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.beans.UserBean;
+import com.ayushgoyal.snappit.dialogs.AlertDialogFragment;
+import com.ayushgoyal.snappit.dialogs.AddAlbumDialogFragment;
 import com.ayushgoyal.snappit.util.Constants;
 
 public class Albums extends Activity {
@@ -49,7 +51,9 @@ public class Albums extends Activity {
 		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
 		case R.id.action_add:
-			Toast.makeText(getApplicationContext(), "Add an album", Toast.LENGTH_SHORT).show();
+			
+			DialogFragment newFragment = AlertDialogFragment.newInstance("Add Album",R.layout.add_album_dialog);
+			newFragment.show(getFragmentManager(), "dialog");
 			break;
 
 		default: return super.onOptionsItemSelected(item);
