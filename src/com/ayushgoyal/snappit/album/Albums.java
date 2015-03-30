@@ -7,6 +7,8 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,6 +18,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.ayushgoyal.snappit.R;
+import com.ayushgoyal.snappit.R.layout;
 import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.beans.UserBean;
 import com.ayushgoyal.snappit.dialogs.AlertDialogFragment;
@@ -23,6 +26,10 @@ import com.ayushgoyal.snappit.dialogs.AddAlbumDialogFragment;
 import com.ayushgoyal.snappit.util.Constants;
 
 public class Albums extends Activity {
+	
+	public static ArrayList<ImageItem> albums = new ArrayList<ImageItem>();
+	GridView gridView;
+	public static AlbumsGridViewAdapter gridViewAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +38,12 @@ public class Albums extends Activity {
 		Intent intent = getIntent();
 		UserBean user = (UserBean) intent.getSerializableExtra("user");
 		setContentView(R.layout.display_albums);
-		GridView gridView = (GridView) findViewById(R.id.albums_grid);
-		AlbumsGridViewAdapter gridViewAdapter = new AlbumsGridViewAdapter(this,
-				R.layout.album_grid_item_layout, getData());
+		gridView = (GridView) findViewById(R.id.albums_grid);
+		albums = getData();
+		gridViewAdapter = new AlbumsGridViewAdapter(this,
+				R.layout.album_grid_item_layout, albums);
 		gridView.setAdapter(gridViewAdapter);
+		
 
 	}
 	
@@ -51,7 +60,6 @@ public class Albums extends Activity {
 		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
 		case R.id.action_add:
-			
 			DialogFragment newFragment = AlertDialogFragment.newInstance("Add Album",R.layout.add_album_dialog);
 			newFragment.show(getFragmentManager(), "dialog");
 			break;

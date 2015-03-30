@@ -10,6 +10,7 @@ import com.ayushgoyal.snappit.beans.AlbumBean;
 public class Constants {
 
 	public static ProgressDialog pDialog = null;
+	public static final String APP_NAME = "Snappit";
 	public static final String URL = "http://www.ayushgoyal09.com/webservice/upload_image.php";
 	public static final String URL_get_imagesList = "http://www.ayushgoyal09.com/webservice/get_all_images.php";
 	public static final String UPLOADS_FOLDER = "http://www.ayushgoyal09.com/webservice/uploadss/";
