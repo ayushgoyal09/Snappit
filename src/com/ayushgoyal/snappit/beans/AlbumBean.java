@@ -8,6 +8,14 @@ public class AlbumBean {
 	private Bitmap albumCover;
 	
 	/**
+	 * @param name
+	 */
+	public AlbumBean(String name) {
+		super();
+		this.name = name;
+	}
+
+	/**
 	 * @param id
 	 * @param name
 	 * @param albumCover
