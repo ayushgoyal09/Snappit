@@ -17,8 +17,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ayushgoyal.snappit.R;
+import com.ayushgoyal.snappit.album.AddAlbumToDb;
 import com.ayushgoyal.snappit.album.Albums;
 import com.ayushgoyal.snappit.album.ImageItem;
+import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.util.Constants;
 
 public class AlertDialogFragment extends DialogFragment{
@@ -69,8 +71,7 @@ public class AlertDialogFragment extends DialogFragment{
 							}
 							
 							//Save new album information to database.
-							
-							
+							new AddAlbumToDb().execute(new AlbumBean(albumName));
 							
 							break;
 
