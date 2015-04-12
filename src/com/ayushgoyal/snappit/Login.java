@@ -157,6 +157,8 @@ public class Login extends Activity implements OnClickListener {
 
 				Toast.makeText(Login.this, "Welcome "+user.getUsername(), Toast.LENGTH_LONG).show();
 				new GetAlbums().execute(user);
+				Constants.currentUser = user;
+				Log.i("Current User", Constants.currentUser.getUsername());
 //				Intent intent = new Intent(getApplicationContext(), Snappit.class);
 //				startActivity(intent);
 				break;
