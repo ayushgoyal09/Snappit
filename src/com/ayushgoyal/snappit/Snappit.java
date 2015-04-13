@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,12 +43,13 @@ import android.widget.Toast;
 import com.ayushgoyal.snappit.adapters.ThumbnailAdapter;
 import com.ayushgoyal.snappit.image.FullScreenImage;
 import com.ayushgoyal.snappit.image.ImageSlidePagerActivity;
+import com.ayushgoyal.snappit.util.Constants;
 
 public class Snappit extends Activity implements OnClickListener {
 
 	private ProgressDialog pDialog;
 	private static final String URL = "http://www.ayushgoyal09.com/webservice/upload_image.php";
-	private static final String URL_get_imagesList = "http://www.ayushgoyal09.com/webservice/get_all_images.php";
+	private static final String URL_get_imagesList = "http://www.ayushgoyal09.com/webservice/get_all_images1.php";
 	private static final String UPLOADS_FOLDER = "http://www.ayushgoyal09.com/webservice/uploadss/";
 	private static final String TAG_SUCCESS = "success";
 	private static final String TAG_IMAGES = "images";
@@ -67,6 +69,11 @@ public class Snappit extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		Intent intent = getIntent();
+		String album = intent.getStringExtra("album");
+		Log.i("Album:", album);
+		Constants.CURRENT_ALBUM = album;
+		Log.i("User:", Constants.currentUser.getUsername());
 		setContentView(R.layout.home_screen);
 		Log.i("size of images", "" + image_urls.size());
 		thumbnails = (GridView) findViewById(R.id.image_grid);
@@ -334,6 +341,8 @@ public class Snappit extends Activity implements OnClickListener {
 			URL url;
 			try {
 				List<NameValuePair> args = new ArrayList<NameValuePair>();
+				args.add(new BasicNameValuePair("username", Constants.currentUser.getUsername()));
+				args.add(new BasicNameValuePair("album",Constants.CURRENT_ALBUM));
 				JSONObject json = new JSONParser().makeHttpRequest(
 						URL_get_imagesList, "GET", args);
 				Log.i("Output", json.toString());
@@ -343,7 +352,7 @@ public class Snappit extends Activity implements OnClickListener {
 					images = json.getJSONArray(TAG_IMAGES);
 					for (int i = 0; i < images.length(); i++) {
 						JSONObject device = images.getJSONObject(i);
-						String name = UPLOADS_FOLDER+device.getString("name");
+						String name = UPLOADS_FOLDER+"/"+Constants.currentUser.getUsername()+"/"+Constants.CURRENT_ALBUM+"/"+device.getString("name");
 						Log.i("image",name);
 						if(!image_urls.contains(name)){
 						
