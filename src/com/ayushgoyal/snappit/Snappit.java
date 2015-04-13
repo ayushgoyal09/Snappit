@@ -1,9 +1,6 @@
 package com.ayushgoyal.snappit;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +12,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,15 +45,16 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.ayushgoyal.snappit.AndroidMultiPartEntity.ProgressListener;
 import com.ayushgoyal.snappit.adapters.ThumbnailAdapter;
-import com.ayushgoyal.snappit.image.FullScreenImage;
 import com.ayushgoyal.snappit.image.ImageSlidePagerActivity;
 import com.ayushgoyal.snappit.util.Constants;
 
 public class Snappit extends Activity implements OnClickListener {
 
 	private ProgressDialog pDialog;
-	private static final String URL = "http://www.ayushgoyal09.com/webservice/upload_image.php";
+//	private static final String URL = "http://www.ayushgoyal09.com/webservice/upload_image2.php";
+	private static final String URL = "http://www.ayushgoyal09.com/webservice/fileUpload1.php";
 	private static final String URL_get_imagesList = "http://www.ayushgoyal09.com/webservice/get_all_images1.php";
 	private static final String UPLOADS_FOLDER = "http://www.ayushgoyal09.com/webservice/uploadss/";
 	private static final String TAG_SUCCESS = "success";
@@ -174,9 +180,8 @@ public class Snappit extends Activity implements OnClickListener {
 		// using Environment.getExternalStorageState() before doing this.
 
 		File mediaStorageDir = new File(
-				Environment
-						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-				"Snappit");
+			Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/Snappit/" + Constants.currentUser.getUsername() + "/" + Constants.CURRENT_ALBUM);
+		Log.i("Media Storage:", mediaStorageDir.getAbsolutePath());
 		// This location works best if you want the created images to be shared
 		// between applications and persist after your app has been uninstalled.
 
@@ -240,82 +245,62 @@ public class Snappit extends Activity implements OnClickListener {
 			pDialog.show();
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		protected String doInBackground(String... arg0) {
-			HttpURLConnection connection = null;
-			DataOutputStream outputStream = null;
-			DataInputStream inputStream = null;
-			String lineEnd = "\r\n";
-			String twoHyphens = "--";
-			String boundary = "*****";
-			int bytesRead, bytesAvailable, bufferSize;
-			byte[] buffer;
-			int maxBufferSize = 1 * 1024 * 1024;
-
-			try {
-				FileInputStream fileInputStream = new FileInputStream(
-						mCurrentPhotoPath);
-				URL url = new URL(URL);
-				connection = (HttpURLConnection) url.openConnection();
-				connection.setDoInput(true);
-				connection.setDoOutput(true);
-				connection.setUseCaches(false);
-				// Set HTTP method to POST.
-				connection.setRequestMethod("POST");
-				connection.setRequestProperty("Connection", "Keep-Alive");
-				connection.setRequestProperty("Content-Type",
-						"multipart/form-data;boundary=" + boundary);
-				outputStream = new DataOutputStream(
-						connection.getOutputStream());
-				outputStream.writeBytes(twoHyphens + boundary + lineEnd);
-				outputStream
-						.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\""
-								+ mCurrentPhotoPath + "\"" + lineEnd);
-				outputStream.writeBytes(lineEnd);
-				bytesAvailable = fileInputStream.available();
-				bufferSize = Math.min(bytesAvailable, maxBufferSize);
-				buffer = new byte[bufferSize];
-				// Read file
-				bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-				while (bytesRead > 0) {
-					outputStream.write(buffer, 0, bufferSize);
-					bytesAvailable = fileInputStream.available();
-					bufferSize = Math.min(bytesAvailable, maxBufferSize);
-					bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+			
+			String responseString = null;
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost(URL);
+			try{
+			AndroidMultiPartEntity entity = new AndroidMultiPartEntity(new ProgressListener() {
+				
+				@Override
+				public void transferred(long num) {
+					// TODO Auto-generated method stub
+					
 				}
+			});
+					
+			File sourceFile = new File(mCurrentPhotoPath);
+			Log.i("SOURCE FILE PATH:", sourceFile.toString());
+			
+			// Adding file data to http body
+			entity.addPart("image", new FileBody(sourceFile));
+			
+			// Extra parameters if you want to pass to server
+			entity.addPart("username", new StringBody(Constants.currentUser.getUsername()));
+			entity.addPart("album", new StringBody(Constants.CURRENT_ALBUM));
+			
+			long totalSize = entity.getContentLength();
+			httppost.setEntity(entity);
 
-				outputStream.writeBytes(lineEnd);
-				outputStream.writeBytes(twoHyphens + boundary + twoHyphens
-						+ lineEnd);
+			// Making server call
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity r_entity = response.getEntity();
 
-				// Responses from the server (code and message)
-				int serverResponseCode = connection.getResponseCode();
-				String serverResponseMessage = connection.getResponseMessage();
-				Log.i("Response iMage", serverResponseMessage + "  "
-						+ serverResponseCode);
-
-				fileInputStream.close();
-				outputStream.flush();
-				outputStream.close();
-
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			int statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode == 200) {
+				// Server response
+				responseString = EntityUtils.toString(r_entity);
+			} else {
+				responseString = "Error occurred! Http Status Code: "
+						+ statusCode;
+			}
+			
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			return null;
+			return responseString;
 		}
 
 		/**
 		 * After completing background task Dismiss the progress dialog
 		 * **/
-		protected void onPostExecute(String file_url) {
+		protected void onPostExecute(String result) {
+			Log.i("SERVER RESPONSE:", result);
 			// dismiss the dialog once done
 			pDialog.dismiss();
 			Toast toast = Toast.makeText(getApplicationContext(),
@@ -352,7 +337,7 @@ public class Snappit extends Activity implements OnClickListener {
 					images = json.getJSONArray(TAG_IMAGES);
 					for (int i = 0; i < images.length(); i++) {
 						JSONObject device = images.getJSONObject(i);
-						String name = UPLOADS_FOLDER+"/"+Constants.currentUser.getUsername()+"/"+Constants.CURRENT_ALBUM+"/"+device.getString("name");
+						String name = UPLOADS_FOLDER+Constants.currentUser.getUsername()+"/"+Constants.CURRENT_ALBUM+"/"+device.getString("name");
 						Log.i("image",name);
 						if(!image_urls.contains(name)){
 						

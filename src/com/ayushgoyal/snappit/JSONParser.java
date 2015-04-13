@@ -75,9 +75,11 @@ public class JSONParser {
 		return jObj;
 	}
 
+	@SuppressWarnings("deprecation") 
 	public JSONObject makeHttpRequest(String url, String method,
 			List<NameValuePair> params) {
 		try {
+			json="NULL";
 			if (method.equalsIgnoreCase("POST")) {
 				DefaultHttpClient httpClient = new DefaultHttpClient();
 				HttpPost httpPost = new HttpPost(url);
