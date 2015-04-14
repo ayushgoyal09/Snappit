@@ -5,10 +5,14 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.sax.StartElementListener;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -24,6 +28,44 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 	private ArrayList data = new ArrayList();
 	ImageItem selectedItem;
 	String test[];
+	Albums albumActivity;
+	ActionMode mActionMode;
+	ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+		// Called each time the action mode is shown. Always called after
+		// onCreateActionMode, but
+		// may be called multiple times if the mode is invalidated.
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		// Called when the user exits the action mode
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			// TODO Auto-generated method stub
+			mActionMode = null;
+		}
+
+		// Called when the action mode is created; startActionMode() was
+		// called
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.context_action_albums, menu);
+			return true;
+
+		}
+
+		// Called when the user selects a contextual menu item
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+	};
+	
 
 	/**
 	 * @param context
@@ -36,6 +78,7 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
 		this.data = data;
+		albumActivity = (Albums) context;
 	}
 
 	@Override
@@ -72,7 +115,18 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 				intent.putExtra("album", item.getTitle());
 				context.startActivity(intent);
 				
-				
+
+			}
+		});
+		
+		
+		
+		row.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				albumActivity.startActionMode(mActionModeCallback);
+				return true;
 			}
 		});
 		
