@@ -61,11 +61,22 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 		// Called when the user selects a contextual menu item
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-			// TODO Auto-generated method stub
-			return false;
+			switch (item.getItemId()) {
+			case R.id.action_delete:
+				new DeleteAlbum().execute(selectedItem.getTitle());
+				mode.finish();
+				return true;
+				
+			case R.id.action_edit:
+				new RenameAlbum().execute(selectedItem.getTitle(),"renamed");
+				mode.finish();
+				return true;
+
+			default:
+				return false;
+			}
 		}
 	};
-	
 
 	/**
 	 * @param context
@@ -101,35 +112,34 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 		ImageItem item = (ImageItem) data.get(position);
 		holder.albumName.setText(item.getTitle());
 		holder.albumImage.setImageBitmap(item.getImage());
-		
+
 		selectedItem = item;
-		
+
 		row.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				ImageItem item = (ImageItem) data.get(position);
-				Toast.makeText(context, "You Selected the Album: "+position, Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "You Selected the Album: " + position,
+						Toast.LENGTH_LONG).show();
 				Intent intent = new Intent(context, Snappit.class);
 				intent.putExtra("position", position);
 				intent.putExtra("album", item.getTitle());
 				context.startActivity(intent);
-				
 
 			}
 		});
-		
-		
-		
+
 		row.setOnLongClickListener(new OnLongClickListener() {
-			
+
 			@Override
 			public boolean onLongClick(View v) {
+				selectedItem = (ImageItem) data.get(position);									
 				albumActivity.startActionMode(mActionModeCallback);
 				return true;
 			}
 		});
-		
+
 		return row;
 	}
 
