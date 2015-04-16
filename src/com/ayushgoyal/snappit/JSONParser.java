@@ -85,6 +85,7 @@ public class JSONParser {
 				HttpPost httpPost = new HttpPost(url);
 
 				httpPost.setEntity(new UrlEncodedFormEntity(params));
+				Log.i("HTTP POST:", httpPost.getURI().toString());
 				HttpResponse httpResponse;
 				httpResponse = httpClient.execute(httpPost);
 				HttpEntity httpEntity = httpResponse.getEntity();
