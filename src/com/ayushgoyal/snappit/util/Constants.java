@@ -27,6 +27,9 @@ public class Constants {
 	public static final String DELETE_ALBUM_URL = "http://www.ayushgoyal09.com/webservice/delete_dir.php";
 	public static final String RENAME_ALBUM_URL = "http://www.ayushgoyal09.com/webservice/rename_dir.php";
 	public static final String TAG_RESULT = "result";
+	
+	public static final String CHANGE_PASSWORD_URL = "http://www.ayushgoyal09.com/webservice/change_password.php";
+	public static final String DELETE_ACCOUNT_URL = "http://www.ayushgoyal09.com/webservice/delete_account.php";
 	public static List<AlbumBean> ALBUM_LIST = new ArrayList<AlbumBean>();	
 
 

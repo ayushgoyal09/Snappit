@@ -21,6 +21,7 @@ import com.ayushgoyal.snappit.album.AddAlbumToDb;
 import com.ayushgoyal.snappit.album.Albums;
 import com.ayushgoyal.snappit.album.ImageItem;
 import com.ayushgoyal.snappit.beans.AlbumBean;
+import com.ayushgoyal.snappit.user.profile.DeleteUserAccount;
 import com.ayushgoyal.snappit.util.Constants;
 
 public class AlertDialogFragment extends DialogFragment{
@@ -74,7 +75,17 @@ public class AlertDialogFragment extends DialogFragment{
 							new AddAlbumToDb().execute(new AlbumBean(albumName));
 							
 							break;
-
+ 
+						case R.layout.delete_account:					
+							Toast.makeText(getActivity(),
+									"POSITIVE", Toast.LENGTH_SHORT)
+									.show();
+							new DeleteUserAccount().execute();
+							
+							
+							
+							break;
+						
 						default:
 							break;
 						}
@@ -95,6 +106,12 @@ public class AlertDialogFragment extends DialogFragment{
 							Toast.makeText(getActivity(), "CANCEL", Toast.LENGTH_SHORT).show();;
 							break;
 
+						case R.layout.delete_account:
+							Toast.makeText(getActivity(),
+									"NEGATIVE", Toast.LENGTH_SHORT)
+									.show();
+							break;	
+							
 						default:
 							break;
 						}
