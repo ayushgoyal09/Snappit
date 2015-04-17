@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ayushgoyal.snappit.JSONParser;
+import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.util.Constants;
 
 import android.os.AsyncTask;
@@ -32,6 +33,9 @@ public class RenameAlbum extends AsyncTask<String, Void, Integer> {
 			Log.d("result", "is : " + result);
 			if (result == 1) {
 				Log.d("Album rename Successful!", json.toString());
+				AlbumsGridViewAdapter.selectedItem.setTitle(albums[1]);
+				AlbumBean renamedAlbumBean = AlbumBean.getAlbumBeanByTitle(albums[0], Constants.ALBUM_LIST);
+				renamedAlbumBean.setName(albums[1]);
 				return 1;
 			} else if (result == 0) {
 				Log.d("Album rename Failure", json.toString());
