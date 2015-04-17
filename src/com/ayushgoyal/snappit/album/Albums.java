@@ -16,6 +16,7 @@ import com.ayushgoyal.snappit.R;
 import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.beans.UserBean;
 import com.ayushgoyal.snappit.dialogs.AlertDialogFragment;
+import com.ayushgoyal.snappit.user.profile.MyProfile;
 import com.ayushgoyal.snappit.util.Constants;
 
 public class Albums extends Activity {
@@ -56,6 +57,10 @@ public class Albums extends Activity {
 					"Add Album", R.layout.add_album_dialog);
 			newFragment.show(getFragmentManager(), "dialog");
 			break;
+			
+		case R.id.action_profile:
+			Intent intent = new Intent(getApplicationContext(), MyProfile.class);
+			startActivity(intent);
 
 		default:
 			return super.onOptionsItemSelected(item);

@@ -53,6 +53,10 @@
             android:name="com.ayushgoyal.snappit.Scannit"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name="com.ayushgoyal.snappit.user.profile.MyProfile"
+            android:label="@string/profile" >
+        </activity>
     </application>
 
 </manifest>
