@@ -77,8 +77,10 @@ public class Snappit extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
 		String album = intent.getStringExtra("album");
-		Log.i("Album:", album);
-		Constants.CURRENT_ALBUM = album;
+		if(album!=null){
+			Log.i("Album:", album);
+			Constants.CURRENT_ALBUM = album;	
+		}
 		Log.i("User:", Constants.currentUser.getUsername());
 		setContentView(R.layout.home_screen);
 		Log.i("size of images", "" + image_urls.size());
@@ -306,6 +308,7 @@ public class Snappit extends Activity implements OnClickListener {
 			Toast toast = Toast.makeText(getApplicationContext(),
 					"Image added Successfully!", Toast.LENGTH_SHORT);
 			toast.show();
+			new DisplayImages().execute();
 			runOnUiThread(new Runnable() {
 				
 				@Override
@@ -331,7 +334,7 @@ public class Snappit extends Activity implements OnClickListener {
 				JSONObject json = new JSONParser().makeHttpRequest(
 						URL_get_imagesList, "GET", args);
 				Log.i("Output", json.toString());
-
+				image_urls.clear();
 				int success = 1;
 				if (success == 1) {
 					images = json.getJSONArray(TAG_IMAGES);
@@ -348,7 +351,7 @@ public class Snappit extends Activity implements OnClickListener {
 					}
 
 				}
-
+				allImages.clear();
 				int i = 0;
 				while (i < image_urls.size()) {
 
@@ -381,10 +384,10 @@ public class Snappit extends Activity implements OnClickListener {
 
 		@Override
 		protected void onPostExecute(String result) {
-			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			thumbnails.setAdapter(new ThumbnailAdapter(Snappit.this));
-			
+			ThumbnailAdapter thumbsAdapter = new ThumbnailAdapter(Snappit.this);
+			thumbsAdapter.notifyDataSetChanged();
+			thumbnails.setAdapter(thumbsAdapter);
 
 		}
 	}
