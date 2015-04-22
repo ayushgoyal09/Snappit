@@ -8,6 +8,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ayushgoyal.snappit.album.Albums;
+import com.ayushgoyal.snappit.beans.UserBean;
+import com.ayushgoyal.snappit.util.Constants;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -120,7 +124,10 @@ public class Signup extends Activity implements OnClickListener {
 				break;
 
 			case 1:
-				Intent intent = new Intent(getApplicationContext(),Snappit.class);
+				Intent intent = new Intent(getApplicationContext(),Albums.class);
+				UserBean newUser = new UserBean(user, pass, emailAddress);
+				Constants.currentUser = newUser;
+				intent.putExtra("user", newUser);
 				startActivity(intent);
 
 				Toast.makeText(getApplicationContext(),
