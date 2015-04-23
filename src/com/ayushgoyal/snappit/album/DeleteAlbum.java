@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ayushgoyal.snappit.JSONParser;
+import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.util.Constants;
 
 import android.os.AsyncTask;
@@ -30,8 +31,23 @@ public class DeleteAlbum extends AsyncTask<String, Void, Integer>{
 		
 		int result = 0;
 		try {
-			result = json.getInt(Constants.TAG_SUCCESS);
-			Log.d("Add Album Response", ""+result);
+			result = json.getInt(Constants.TAG_SUCCESS);			
+			Log.d("Delete Album Response", ""+result);
+			if(result==1){
+				for(AlbumBean album: Constants.ALBUM_LIST){
+					if(albums[0].equals(album.getName())){
+						Constants.ALBUM_LIST.remove(album);
+						break;
+					}
+				}
+				for(ImageItem item: Albums.albums){
+					if(albums[0].equals(item.getTitle())){
+						Albums.albums.remove(item);
+						break;
+					}
+				}
+				Log.i("ALBUMS:", Constants.ALBUM_LIST.toString());
+			}
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -40,6 +56,12 @@ public class DeleteAlbum extends AsyncTask<String, Void, Integer>{
 
 		return result;
 
+	}
+	
+	@Override
+	protected void onPostExecute(Integer result) {
+		super.onPostExecute(result);
+		Albums.gridViewAdapter.notifyDataSetChanged();
 	}
 
 }

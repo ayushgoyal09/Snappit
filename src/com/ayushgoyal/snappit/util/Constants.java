@@ -24,7 +24,7 @@ public class Constants {
 
 	public static final String GET_ALBUMS_URL = "http://www.ayushgoyal09.com/webservice/get_all_albums.php";
 	public static final String ADD_ALBUM_URL = "http://www.ayushgoyal09.com/webservice/add_album.php";
-	public static final String DELETE_ALBUM_URL = "http://www.ayushgoyal09.com/webservice/delete_dir.php";
+	public static final String DELETE_ALBUM_URL = "http://www.ayushgoyal09.com/webservice/delete_album.php";
 	public static final String RENAME_ALBUM_URL = "http://www.ayushgoyal09.com/webservice/rename_dir.php";
 	public static final String TAG_RESULT = "result";
 	
