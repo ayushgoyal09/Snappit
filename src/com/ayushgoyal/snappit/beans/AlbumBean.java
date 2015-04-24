@@ -1,5 +1,7 @@
 package com.ayushgoyal.snappit.beans;
 
+import java.util.List;
+
 import android.graphics.Bitmap;
 
 public class AlbumBean {
@@ -48,5 +50,14 @@ public class AlbumBean {
 		this.albumCover = albumCover;
 	}
 	
+	public static AlbumBean getAlbumBeanByTitle(String albumTitle, List<AlbumBean> albumBeansList){
+		for(AlbumBean album: albumBeansList){
+			if(albumTitle.equalsIgnoreCase(album.getName())){
+				return album;
+			}
+		}
+		
+		return null;
+	}
 	
 }

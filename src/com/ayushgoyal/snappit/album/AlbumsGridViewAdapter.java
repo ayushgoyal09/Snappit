@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,12 +22,16 @@ import android.widget.Toast;
 
 import com.ayushgoyal.snappit.R;
 import com.ayushgoyal.snappit.Snappit;
+import com.ayushgoyal.snappit.beans.AlbumBean;
+import com.ayushgoyal.snappit.util.Constants;
 
 public class AlbumsGridViewAdapter extends ArrayAdapter {
 	private Context context;
 	private int layoutResourceId;
 	private ArrayList data = new ArrayList();
-	ImageItem selectedItem;
+	static ImageItem selectedItem;
+	
+
 	String test[];
 	Albums albumActivity;
 	ActionMode mActionMode;
@@ -69,6 +74,11 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 				
 			case R.id.action_edit:
 				new RenameAlbum().execute(selectedItem.getTitle(),"renamed");
+				ArrayList<String> names = new ArrayList<String>();
+				for(AlbumBean bean: Constants.ALBUM_LIST){
+					names.add(bean.getName());
+				}
+				Log.i("ALBUMS LIST GLOBAL:", names.toString());
 				mode.finish();
 				return true;
 

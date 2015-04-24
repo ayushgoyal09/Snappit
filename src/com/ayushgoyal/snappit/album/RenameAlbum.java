@@ -36,6 +36,22 @@ public class RenameAlbum extends AsyncTask<String, Void, Integer> {
 				AlbumsGridViewAdapter.selectedItem.setTitle(albums[1]);
 				AlbumBean renamedAlbumBean = AlbumBean.getAlbumBeanByTitle(albums[0], Constants.ALBUM_LIST);
 				renamedAlbumBean.setName(albums[1]);
+				ArrayList<String> album11 = new ArrayList<String>();
+				for(AlbumBean bean :Constants.ALBUM_LIST){
+					album11.add(bean.getName());
+				}
+				Log.i("ALBUMS LIST GLOBAL2:", album11.toString());
+				for(ImageItem item: Albums.albums){
+					if(albums[0].equals(item.getTitle())){
+						item.setTitle(albums[1]);
+						break;
+					}
+				}
+				ArrayList<String> albums1 = new ArrayList<String>();
+				for(ImageItem item : Albums.albums){
+					albums1.add(item.getTitle());
+				}
+				Log.i("ALBUMS LIST GLOBAL3:", albums1.toString());
 				return 1;
 			} else if (result == 0) {
 				Log.d("Album rename Failure", json.toString());
@@ -46,6 +62,13 @@ public class RenameAlbum extends AsyncTask<String, Void, Integer> {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@Override
+	protected void onPostExecute(Integer result) {
+		// TODO Auto-generated method stub
+		super.onPostExecute(result);
+		Albums.gridViewAdapter.notifyDataSetChanged();
 	}
 
 }
