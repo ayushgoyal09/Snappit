@@ -3,6 +3,7 @@ package com.ayushgoyal.snappit.album;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -23,13 +24,14 @@ import android.widget.Toast;
 import com.ayushgoyal.snappit.R;
 import com.ayushgoyal.snappit.Snappit;
 import com.ayushgoyal.snappit.beans.AlbumBean;
+import com.ayushgoyal.snappit.dialogs.AlertDialogFragment;
 import com.ayushgoyal.snappit.util.Constants;
 
 public class AlbumsGridViewAdapter extends ArrayAdapter {
 	private Context context;
 	private int layoutResourceId;
 	private ArrayList data = new ArrayList();
-	static ImageItem selectedItem;
+	public static ImageItem selectedItem;
 	
 
 	String test[];
@@ -68,17 +70,25 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 			switch (item.getItemId()) {
 			case R.id.action_delete:
-				new DeleteAlbum().execute(selectedItem.getTitle());
+				DialogFragment deleteAlbumFragment = AlertDialogFragment.newInstance("Delete Album "+selectedItem.getTitle(), R.layout.delete_album_dialog);
+				deleteAlbumFragment.show(albumActivity.getFragmentManager(), "dialog");
 				mode.finish();
 				return true;
 				
 			case R.id.action_edit:
-				new RenameAlbum().execute(selectedItem.getTitle(),"renamed");
-				ArrayList<String> names = new ArrayList<String>();
-				for(AlbumBean bean: Constants.ALBUM_LIST){
-					names.add(bean.getName());
-				}
-				Log.i("ALBUMS LIST GLOBAL:", names.toString());
+				Log.i("SELECTED ITEM:", selectedItem.getTitle());
+				Constants.RENAME_ITEM = selectedItem.getTitle();
+				Log.i("RENAME ITEM:", selectedItem.getTitle());
+				DialogFragment newFragment = AlertDialogFragment.newInstance("Rename Album", R.layout.rename_album_dialog);
+				newFragment.show(albumActivity.getFragmentManager(), "dialog");
+//				break;
+				
+//				new RenameAlbum().execute(selectedItem.getTitle(),"renamed");
+//				ArrayList<String> names = new ArrayList<String>();
+//				for(AlbumBean bean: Constants.ALBUM_LIST){
+//					names.add(bean.getName());
+//				}
+//				Log.i("ALBUMS LIST GLOBAL:", names.toString());
 				mode.finish();
 				return true;
 
@@ -144,7 +154,8 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 
 			@Override
 			public boolean onLongClick(View v) {
-				selectedItem = (ImageItem) data.get(position);									
+				selectedItem = (ImageItem) data.get(position);					
+				Log.i("SELECTED ITEM:", selectedItem.getTitle());
 				albumActivity.startActionMode(mActionModeCallback);
 				return true;
 			}

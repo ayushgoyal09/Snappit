@@ -19,7 +19,10 @@ import android.widget.Toast;
 import com.ayushgoyal.snappit.R;
 import com.ayushgoyal.snappit.album.AddAlbumToDb;
 import com.ayushgoyal.snappit.album.Albums;
+import com.ayushgoyal.snappit.album.AlbumsGridViewAdapter;
+import com.ayushgoyal.snappit.album.DeleteAlbum;
 import com.ayushgoyal.snappit.album.ImageItem;
+import com.ayushgoyal.snappit.album.RenameAlbum;
 import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.user.profile.DeleteUserAccount;
 import com.ayushgoyal.snappit.util.Constants;
@@ -86,6 +89,22 @@ public class AlertDialogFragment extends DialogFragment{
 							
 							break;
 						
+						case R.layout.rename_album_dialog:
+//							Log.i("RENAME ALBUM DIALOG:", AlbumsGridViewAdapter.selectedItem.getTitle());
+							Log.i("RENAME ITEM:", Constants.RENAME_ITEM);
+							//Create album icon with default image cover and user entered name.
+							EditText renameAlbumEditText = (EditText) view.findViewById(R.id.modified_album_name);
+							String renamedAlbumName = renameAlbumEditText.getText().toString();
+							Log.i("RENAMING: OLD ALBUM NAME", Constants.RENAME_ITEM);
+							Log.i("RENAMING: NEW ALBUM NAME", renamedAlbumName);
+							new RenameAlbum().execute(Constants.RENAME_ITEM,renamedAlbumName);
+							break;
+							
+						case R.layout.delete_album_dialog:
+							//Create album icon with default image cover and user entered name.
+							new DeleteAlbum().execute(AlbumsGridViewAdapter.selectedItem.getTitle());
+							break;
+							
 						default:
 							break;
 						}
@@ -107,6 +126,12 @@ public class AlertDialogFragment extends DialogFragment{
 							break;
 
 						case R.layout.delete_account:
+							Toast.makeText(getActivity(),
+									"NEGATIVE", Toast.LENGTH_SHORT)
+									.show();
+							break;	
+							
+						case R.layout.rename_album_dialog:
 							Toast.makeText(getActivity(),
 									"NEGATIVE", Toast.LENGTH_SHORT)
 									.show();

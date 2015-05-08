@@ -9,9 +9,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ayushgoyal.snappit.JSONParser;
+import com.ayushgoyal.snappit.R;
 import com.ayushgoyal.snappit.beans.AlbumBean;
+import com.ayushgoyal.snappit.dialogs.AlertDialogFragment;
 import com.ayushgoyal.snappit.util.Constants;
 
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -20,6 +24,8 @@ public class RenameAlbum extends AsyncTask<String, Void, Integer> {
 	@Override
 	protected Integer doInBackground(String... albums) {
 		List<NameValuePair> args = new ArrayList<NameValuePair>();
+		Log.i("ORIGINAL", albums[0]);
+		Log.i("NEW", albums[1]);
 		args.add(new BasicNameValuePair("username", Constants.currentUser.getUsername()));
 		args.add(new BasicNameValuePair("album", albums[0]));
 		args.add(new BasicNameValuePair("newAlbumName", albums[1]));
@@ -33,7 +39,7 @@ public class RenameAlbum extends AsyncTask<String, Void, Integer> {
 			Log.d("result", "is : " + result);
 			if (result == 1) {
 				Log.d("Album rename Successful!", json.toString());
-				AlbumsGridViewAdapter.selectedItem.setTitle(albums[1]);
+//				AlbumsGridViewAdapter.selectedItem.setTitle(albums[1]);
 				AlbumBean renamedAlbumBean = AlbumBean.getAlbumBeanByTitle(albums[0], Constants.ALBUM_LIST);
 				renamedAlbumBean.setName(albums[1]);
 				ArrayList<String> album11 = new ArrayList<String>();
