@@ -33,6 +33,9 @@ public class AddAlbumToDb extends AsyncTask<AlbumBean,String, Integer>{
 		int result = 0;
 		try {
 			result = json.getInt(Constants.TAG_SUCCESS);
+			if(result==1){
+				Constants.ALBUM_LIST.add(albums[0]);
+			}
 			Log.d("Add Album Response", ""+result);
 
 		} catch (JSONException e) {
