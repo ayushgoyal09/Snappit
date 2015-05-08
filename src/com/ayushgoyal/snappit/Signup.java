@@ -102,7 +102,7 @@ public class Signup extends Activity implements OnClickListener {
 			JSONObject json = jsonParser.makeHttpRequest(URL, "POST", args);
 			int result = 0;
 			try {
-				result = json.getInt(TAG_RESULT);
+				result = Integer.parseInt(json.getString(TAG_RESULT));
 				Log.d("result", "is : " + result);
 
 			} catch (JSONException e) {
