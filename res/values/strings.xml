@@ -17,6 +17,7 @@
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>	
     <string name="profile">My Profile</string>	
+    <string name="sort">Sort</string>	
     <string name="album_name">Album Name</string>
     <string name="alert_dialog_ok">OK</string>
     <string name="alert_dialog_cancel">CANCEL</string>

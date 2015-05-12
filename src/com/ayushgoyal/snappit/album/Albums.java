@@ -1,6 +1,7 @@
 package com.ayushgoyal.snappit.album;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.ayushgoyal.snappit.R;
 import com.ayushgoyal.snappit.beans.AlbumBean;
@@ -61,7 +63,11 @@ public class Albums extends Activity {
 		case R.id.action_profile:
 			Intent intent = new Intent(getApplicationContext(), MyProfile.class);
 			startActivity(intent);
-
+			
+		case R.id.action_sort:
+			Toast.makeText(getApplicationContext(), "SORT", Toast.LENGTH_SHORT).show();
+			Collections.sort(albums);
+			Albums.gridViewAdapter.notifyDataSetChanged();
 		default:
 			return super.onOptionsItemSelected(item);
 

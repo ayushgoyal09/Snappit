@@ -2,7 +2,7 @@ package com.ayushgoyal.snappit.album;
 
 import android.graphics.Bitmap;
 
-public class ImageItem {
+public class ImageItem implements Comparable<ImageItem>{
 	private Bitmap image;
 	private String title;
 
@@ -27,4 +27,11 @@ public class ImageItem {
 	public void setTitle(String title) {
 		this.title = title;
 	}
+
+	@Override
+	public int compareTo(ImageItem another) {
+		return this.title.compareTo(another.title);
+	}
+	
+	
 }

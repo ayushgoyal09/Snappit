@@ -12,5 +12,11 @@
         android:icon="@drawable/ic_action_profile"
         android:title="@string/profile"
         android:showAsAction="ifRoom"/>
+    
+    <item 
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_action_sort"
+        android:title="@string/sort"
+        android:showAsAction="ifRoom"/>
 
 </menu>
