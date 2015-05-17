@@ -33,5 +33,6 @@ public class Constants {
 	public static final String DELETE_ACCOUNT_URL = "http://www.ayushgoyal09.com/webservice/delete_account.php";
 	public static List<AlbumBean> ALBUM_LIST = new ArrayList<AlbumBean>();	
 
+	public static final String DELETE_IMAGE_URL = "http://www.ayushgoyal09.com/webservice/delete_images.php";
 
 }

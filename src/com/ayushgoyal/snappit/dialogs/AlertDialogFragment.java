@@ -1,6 +1,7 @@
 package com.ayushgoyal.snappit.dialogs;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,10 +18,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ayushgoyal.snappit.R;
+import com.ayushgoyal.snappit.Snappit;
 import com.ayushgoyal.snappit.album.AddAlbumToDb;
 import com.ayushgoyal.snappit.album.Albums;
 import com.ayushgoyal.snappit.album.AlbumsGridViewAdapter;
 import com.ayushgoyal.snappit.album.DeleteAlbum;
+import com.ayushgoyal.snappit.album.DeleteImages;
 import com.ayushgoyal.snappit.album.ImageItem;
 import com.ayushgoyal.snappit.album.RenameAlbum;
 import com.ayushgoyal.snappit.beans.AlbumBean;
@@ -39,10 +42,22 @@ public class AlertDialogFragment extends DialogFragment{
         
 	}
 	
+	public static AlertDialogFragment newInstance(String title,int layout, ArrayList<String> dataList){
+		AlertDialogFragment frag = new AlertDialogFragment();
+        Bundle args = new Bundle();
+        args.putString("title", title);
+        args.putInt("layout", layout);
+        args.putStringArrayList("dataList", dataList);
+        frag.setArguments(args);
+        return frag;
+        
+	}
+	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		String title = getArguments().getString("title");
 		final int layout = getArguments().getInt("layout");
+		final ArrayList<String> dataList = getArguments().getStringArrayList("dataList");
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		final View view = inflater.inflate(layout, null);
 		
@@ -103,6 +118,12 @@ public class AlertDialogFragment extends DialogFragment{
 						case R.layout.delete_album_dialog:
 							//Create album icon with default image cover and user entered name.
 							new DeleteAlbum().execute(AlbumsGridViewAdapter.selectedItem.getTitle());
+							break;
+							
+						case R.layout.delete_image_dialog:
+							System.out.println(dataList.toString());
+							new DeleteImages().execute(dataList);
+							
 							break;
 							
 						default:

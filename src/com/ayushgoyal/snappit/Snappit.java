@@ -1,7 +1,6 @@
 package com.ayushgoyal.snappit;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -27,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -37,16 +37,25 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
 import com.ayushgoyal.snappit.AndroidMultiPartEntity.ProgressListener;
 import com.ayushgoyal.snappit.adapters.ThumbnailAdapter;
+import com.ayushgoyal.snappit.dialogs.AlertDialogFragment;
 import com.ayushgoyal.snappit.image.ImageSlidePagerActivity;
 import com.ayushgoyal.snappit.util.Constants;
 
@@ -60,16 +69,78 @@ public class Snappit extends Activity implements OnClickListener {
 	private static final String TAG_SUCCESS = "success";
 	private static final String TAG_IMAGES = "images";
 	JSONArray images;
-	private static ArrayList<String> image_urls = new ArrayList<String>();
+	public static ArrayList<String> image_urls = new ArrayList<String>();
 	private static final int MEDIA_TYPE_IMAGE = 1;
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	private static String mCurrentPhotoPath; // File path to the last image
 												// captured
 	private Uri fileUri;
-	GridView thumbnails;
+	public GridView thumbnails;
 	private Button takePictureButton;
 	public static Bitmap testImage;
 	public static ArrayList<Bitmap> allImages = new ArrayList<Bitmap>();
+	ActionMode mActionMode;
+	ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+		// Called each time the action mode is shown. Always called after
+		// onCreateActionMode, but
+		// may be called multiple times if the mode is invalidated.
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		// Called when the user exits the action mode
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			// TODO Auto-generated method stub
+			mActionMode = null;
+		}
+
+		// Called when the action mode is created; startActionMode() was
+		// called
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.context_action_images, menu);
+			return true;
+
+		}
+
+		// Called when the user selects a contextual menu item
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			switch (item.getItemId()) {
+			case R.id.action_delete:
+//				DialogFragment deleteAlbumFragment = AlertDialogFragment.newInstance("Delete Album "+selectedItem.getTitle(), R.layout.delete_album_dialog);
+//				deleteAlbumFragment.show(albumActivity.getFragmentManager(), "dialog");
+//				mode.finish();
+//				return true;
+				
+			case R.id.action_edit:
+//				Log.i("SELECTED ITEM:", selectedItem.getTitle());
+//				Constants.RENAME_ITEM = selectedItem.getTitle();
+//				Log.i("RENAME ITEM:", selectedItem.getTitle());
+//				DialogFragment newFragment = AlertDialogFragment.newInstance("Rename Album", R.layout.rename_album_dialog);
+//				newFragment.show(albumActivity.getFragmentManager(), "dialog");
+//				break;
+				
+//				new RenameAlbum().execute(selectedItem.getTitle(),"renamed");
+//				ArrayList<String> names = new ArrayList<String>();
+//				for(AlbumBean bean: Constants.ALBUM_LIST){
+//					names.add(bean.getName());
+//				}
+//				Log.i("ALBUMS LIST GLOBAL:", names.toString());
+				mode.finish();
+				return true;
+
+			default:
+				return false;
+			}
+		}
+	};
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +159,82 @@ public class Snappit extends Activity implements OnClickListener {
 		takePictureButton = (Button) findViewById(R.id.camera_button);
 		takePictureButton.setOnClickListener(this);
 		new DisplayImages().execute();
+		thumbnails.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+		thumbnails.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+			
+			@Override
+			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public void onDestroyActionMode(ActionMode mode) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+				MenuInflater inflater = mode.getMenuInflater();
+				inflater.inflate(R.menu.context_action_images, menu);
+				return true;
+			}
+			
+			@Override
+			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+				switch (item.getItemId()) {
+				case R.id.action_delete:
+					String numberOfImagesSelected = thumbnails.getCheckedItemCount()+"";
+					SparseBooleanArray checkedItems = thumbnails.getCheckedItemPositions();
+					ArrayList<String> selectedImageNameList = new ArrayList<String>();
+					if(checkedItems!=null){
+						for(int i=0;i<checkedItems.size();i++){
+							if(checkedItems.valueAt(i)){
+//								String img = thumbnails.getAdapter().getIma(checkedItems.keyAt(i)).toString();
+								String img = image_urls.get(checkedItems.keyAt(i)).toString();
+								img = img.substring(img.lastIndexOf("/")+1);
+								selectedImageNameList.add(img);
+								
+							}
+						}
+					}
+					
+					DialogFragment deleteImagesFragment = AlertDialogFragment.newInstance("Delete "+numberOfImagesSelected+" images" , R.layout.delete_image_dialog, selectedImageNameList);
+					deleteImagesFragment.show(getFragmentManager(), "dialog");
+					mode.finish();
+					return true;
+					
+				case R.id.action_edit:
+//					Log.i("SELECTED ITEM:", selectedItem.getTitle());
+//					Constants.RENAME_ITEM = selectedItem.getTitle();
+//					Log.i("RENAME ITEM:", selectedItem.getTitle());
+//					DialogFragment newFragment = AlertDialogFragment.newInstance("Rename Album", R.layout.rename_album_dialog);
+//					newFragment.show(albumActivity.getFragmentManager(), "dialog");
+//					break;
+					
+//					new RenameAlbum().execute(selectedItem.getTitle(),"renamed");
+//					ArrayList<String> names = new ArrayList<String>();
+//					for(AlbumBean bean: Constants.ALBUM_LIST){
+//						names.add(bean.getName());
+//					}
+//					Log.i("ALBUMS LIST GLOBAL:", names.toString());
+					Toast.makeText(getApplicationContext(), "EDIT", Toast.LENGTH_SHORT).show();
+					mode.finish();
+					return true;
+				}
+				return false;
+			}
+			
+			@Override
+			public void onItemCheckedStateChanged(ActionMode mode, int position,
+					long id, boolean checked) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		
 		thumbnails.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -100,6 +247,17 @@ public class Snappit extends Activity implements OnClickListener {
 				
 			}
 		});
+		
+//		thumbnails.setOnItemLongClickListener(new OnItemLongClickListener() {
+//
+//			@Override
+//			public boolean onItemLongClick(AdapterView<?> parent, View view,
+//					int position, long id) {
+//				parent.startActionMode(mActionModeCallback);
+//				return true;
+//			}
+//		});
+		
 	}
 	@Override
 	public void onClick(View v) {
