@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -25,6 +26,8 @@ import android.widget.Toast;
 import com.ayushgoyal.snappit.album.Albums;
 import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.beans.UserBean;
+import com.ayushgoyal.snappit.dialogs.AlertDialogFragment;
+import com.ayushgoyal.snappit.util.ConnectionDetector;
 import com.ayushgoyal.snappit.util.Constants;
 import com.ayushgoyal.snappit.util.ResourceUtil;
 
@@ -43,6 +46,15 @@ public class Login extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
+
+		ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+		if (!cd.isConnectingToInternet()) {
+			DialogFragment newFragment = AlertDialogFragment
+					.newInstance("Internet Connection Error",
+							R.layout.internet_error_dialog);
+			newFragment.show(getFragmentManager(), "dialog");
+		}
+
 		loginButton = (Button) findViewById(R.id.login_button);
 		loginButton.setOnClickListener(this);
 		signUp = (TextView) findViewById(R.id.sign_up);
@@ -74,7 +86,8 @@ public class Login extends Activity implements OnClickListener {
 	}
 
 	public boolean checkForCredentials() {
-		Log.d("Credentials", "username :" + user.getUsername() + "\npassword :" + user.getPassword());
+		Log.d("Credentials", "username :" + user.getUsername() + "\npassword :"
+				+ user.getPassword());
 		// Log.d("IP Address", myIP);
 		if (user.getUsername().equals("") && user.getPassword().equals("")) {
 			Toast.makeText(getApplicationContext(),
@@ -119,7 +132,8 @@ public class Login extends Activity implements OnClickListener {
 				List<NameValuePair> args = new ArrayList<NameValuePair>();
 				args.add(new BasicNameValuePair("username", user.getUsername()));
 				args.add(new BasicNameValuePair("password", user.getPassword()));
-				Log.d("request!", "starting" + user.getUsername() + user.getPassword());
+				Log.d("request!",
+						"starting" + user.getUsername() + user.getPassword());
 				// getting product details by making HTTP request
 				JSONObject json = jsonParser.makeHttpRequest(LOGIN_URL, "POST",
 						args);
@@ -141,7 +155,7 @@ public class Login extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 
-			return null;
+			return 0;
 		}
 
 		protected void onPostExecute(Integer res) {
@@ -155,19 +169,21 @@ public class Login extends Activity implements OnClickListener {
 
 			case 1:
 
-				Toast.makeText(Login.this, "Welcome "+user.getUsername(), Toast.LENGTH_LONG).show();
+				Toast.makeText(Login.this, "Welcome " + user.getUsername(),
+						Toast.LENGTH_LONG).show();
 				new GetAlbums().execute(user);
 				Constants.currentUser = user;
 				Log.i("Current User", Constants.currentUser.getUsername());
-//				Intent intent = new Intent(getApplicationContext(), Snappit.class);
-//				startActivity(intent);
+				// Intent intent = new Intent(getApplicationContext(),
+				// Snappit.class);
+				// startActivity(intent);
 				break;
 			}
 
 		}
 
 	}
-	
+
 	class GetAlbums extends AsyncTask<UserBean, String, Void> {
 		ProgressDialog pDialog = new ProgressDialog(Login.this);
 
@@ -192,21 +208,26 @@ public class Login extends Activity implements OnClickListener {
 			int success = 0;
 			try {
 				success = json.getInt(Constants.TAG_SUCCESS);
-				if(success==1){
+				if (success == 1) {
 					JSONArray albumsArray = json.getJSONArray("albums");
-					for(int i=0;i<albumsArray.length();i++){
+					for (int i = 0; i < albumsArray.length(); i++) {
 						JSONObject album = albumsArray.getJSONObject(i);
-						Constants.ALBUM_LIST.add(new AlbumBean(album.getString("id"), album.getString("name"), ResourceUtil.getBitmapFromURL(album.getString("cover"))));
-//						Constants.ALBUM_LIST.add(new AlbumBean(album.getString("id"), album.getString("name")));
+						Constants.ALBUM_LIST.add(new AlbumBean(album
+								.getString("id"), album.getString("name"),
+								ResourceUtil.getBitmapFromURL(album
+										.getString("cover"))));
+						// Constants.ALBUM_LIST.add(new
+						// AlbumBean(album.getString("id"),
+						// album.getString("name")));
 					}
-					
+
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			Log.i("Checkpoint", "1");
-			Log.i("Success", ""+success);
+			Log.i("Success", "" + success);
 			return null;
 		}
 
@@ -214,10 +235,9 @@ public class Login extends Activity implements OnClickListener {
 		protected void onPostExecute(Void result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			
+
 			pDialog.dismiss();
-			Intent intent = new Intent(getApplicationContext(),
-			Albums.class);
+			Intent intent = new Intent(getApplicationContext(), Albums.class);
 			intent.putExtra("user", user);
 			startActivity(intent);
 

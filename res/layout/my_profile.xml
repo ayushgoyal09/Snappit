@@ -60,14 +60,42 @@
         android:layout_marginTop="33dp"
         android:text="Change Password" />
 
+    <!-- <Button
+        android:id="@+id/sync"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/delete_account"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="17dp"
+        android:text="SYNC" /> -->
+
     <Button
         android:id="@+id/delete_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/change_password"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/change_password"
-        android:layout_marginBottom="41dp"
+        android:layout_marginBottom="33dp"
         android:text="DELETE MY ACCOUNT" />
+
+    <Button
+        android:id="@+id/sync_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/delete_account"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="19dp"
+        android:layout_marginLeft="33dp"
+        android:text="SYNC UP" />
+
+    <Button
+        android:id="@+id/sync_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/sync_up"
+        android:layout_alignBottom="@+id/sync_up"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="32dp"
+        android:text="SYNC DOWN" />
 
 </RelativeLayout>

@@ -16,7 +16,7 @@ public class Constants {
 	public static String RENAME_ITEM = null;
 	public static final String APP_NAME = "Snappit";
 	public static final String URL = "http://www.ayushgoyal09.com/webservice/upload_image.php";
-	public static final String URL_get_imagesList = "http://www.ayushgoyal09.com/webservice/get_all_images.php";
+	public static final String URL_get_imagesList = "http://www.ayushgoyal09.com/webservice/get_all_images1.php";
 	public static final String UPLOADS_FOLDER = "http://www.ayushgoyal09.com/webservice/uploadss/";
 	public static final String TAG_SUCCESS = "success";
 	public static final String TAG_IMAGES = "images";
@@ -34,5 +34,9 @@ public class Constants {
 	public static List<AlbumBean> ALBUM_LIST = new ArrayList<AlbumBean>();	
 
 	public static final String DELETE_IMAGE_URL = "http://www.ayushgoyal09.com/webservice/delete_images.php";
+	public static final String MOVE_IMAGE_URL = "http://www.ayushgoyal09.com/webservice/move_images1.php";
+	
+	public static ArrayList<String> SYNC_CLIENT_IMAGELIST = new ArrayList<String>();
+	public static ArrayList<String> SYNC_UP_CLIENT_IMAGELIST = new ArrayList<String>();
 
 }

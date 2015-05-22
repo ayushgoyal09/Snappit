@@ -57,13 +57,14 @@ import com.ayushgoyal.snappit.AndroidMultiPartEntity.ProgressListener;
 import com.ayushgoyal.snappit.adapters.ThumbnailAdapter;
 import com.ayushgoyal.snappit.dialogs.AlertDialogFragment;
 import com.ayushgoyal.snappit.image.ImageSlidePagerActivity;
+import com.ayushgoyal.snappit.util.ConnectionDetector;
 import com.ayushgoyal.snappit.util.Constants;
 
 public class Snappit extends Activity implements OnClickListener {
 
 	private ProgressDialog pDialog;
 //	private static final String URL = "http://www.ayushgoyal09.com/webservice/upload_image2.php";
-	private static final String URL = "http://www.ayushgoyal09.com/webservice/fileUpload1.php";
+	private static final String URL = "http://www.ayushgoyal09.com/webservice/fileUpload2.php";
 	private static final String URL_get_imagesList = "http://www.ayushgoyal09.com/webservice/get_all_images1.php";
 	private static final String UPLOADS_FOLDER = "http://www.ayushgoyal09.com/webservice/uploadss/";
 	private static final String TAG_SUCCESS = "success";
@@ -183,22 +184,24 @@ public class Snappit extends Activity implements OnClickListener {
 			
 			@Override
 			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-				switch (item.getItemId()) {
-				case R.id.action_delete:
-					String numberOfImagesSelected = thumbnails.getCheckedItemCount()+"";
-					SparseBooleanArray checkedItems = thumbnails.getCheckedItemPositions();
-					ArrayList<String> selectedImageNameList = new ArrayList<String>();
-					if(checkedItems!=null){
-						for(int i=0;i<checkedItems.size();i++){
-							if(checkedItems.valueAt(i)){
-//								String img = thumbnails.getAdapter().getIma(checkedItems.keyAt(i)).toString();
-								String img = image_urls.get(checkedItems.keyAt(i)).toString();
-								img = img.substring(img.lastIndexOf("/")+1);
-								selectedImageNameList.add(img);
-								
-							}
+				String numberOfImagesSelected = thumbnails.getCheckedItemCount()+"";
+				SparseBooleanArray checkedItems = thumbnails.getCheckedItemPositions();
+				ArrayList<String> selectedImageNameList = new ArrayList<String>();
+				if(checkedItems!=null){
+					for(int i=0;i<checkedItems.size();i++){
+						if(checkedItems.valueAt(i)){
+//							String img = thumbnails.getAdapter().getIma(checkedItems.keyAt(i)).toString();
+							String img = image_urls.get(checkedItems.keyAt(i)).toString();
+							img = img.substring(img.lastIndexOf("/")+1);
+							selectedImageNameList.add(img);
+							
 						}
 					}
+				}
+				
+				switch (item.getItemId()) {
+				case R.id.action_delete:
+					
 					
 					DialogFragment deleteImagesFragment = AlertDialogFragment.newInstance("Delete "+numberOfImagesSelected+" images" , R.layout.delete_image_dialog, selectedImageNameList);
 					deleteImagesFragment.show(getFragmentManager(), "dialog");
@@ -206,20 +209,10 @@ public class Snappit extends Activity implements OnClickListener {
 					return true;
 					
 				case R.id.action_edit:
-//					Log.i("SELECTED ITEM:", selectedItem.getTitle());
-//					Constants.RENAME_ITEM = selectedItem.getTitle();
-//					Log.i("RENAME ITEM:", selectedItem.getTitle());
-//					DialogFragment newFragment = AlertDialogFragment.newInstance("Rename Album", R.layout.rename_album_dialog);
-//					newFragment.show(albumActivity.getFragmentManager(), "dialog");
-//					break;
 					
-//					new RenameAlbum().execute(selectedItem.getTitle(),"renamed");
-//					ArrayList<String> names = new ArrayList<String>();
-//					for(AlbumBean bean: Constants.ALBUM_LIST){
-//						names.add(bean.getName());
-//					}
-//					Log.i("ALBUMS LIST GLOBAL:", names.toString());
-					Toast.makeText(getApplicationContext(), "EDIT", Toast.LENGTH_SHORT).show();
+					DialogFragment moveImagesFragment = AlertDialogFragment.newInstance("Move "+numberOfImagesSelected+" images", R.layout.move_images_dialog, selectedImageNameList);
+					moveImagesFragment.show(getFragmentManager(), "dialog");
+					
 					mode.finish();
 					return true;
 				}
@@ -306,7 +299,15 @@ public class Snappit extends Activity implements OnClickListener {
 					Uri contentUri = Uri.fromFile(f);
 					mediaScanIntent.setData(contentUri);
 					this.sendBroadcast(mediaScanIntent);
+					ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+					if (!cd.isConnectingToInternet()) {
+						DialogFragment newFragment = AlertDialogFragment
+								.newInstance("Internet Connection Error",
+										R.layout.internet_error_dialog);
+						newFragment.show(getFragmentManager(), "dialog");
+					}else{
 					new UploadImage().execute();
+					}
 
 					// Image captured and saved to fileUri specified in the
 					// Intent

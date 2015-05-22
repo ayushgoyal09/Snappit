@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ayushgoyal.snappit.JSONParser;
+import com.ayushgoyal.snappit.Snappit;
 import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.util.Constants;
 
@@ -37,6 +38,13 @@ public class DeleteImages extends AsyncTask<ArrayList<String>, Void, Integer>{
 		
 		int result = 0;
 		return null;
+	}
+	
+	@Override
+	protected void onPostExecute(Integer result) {
+		// TODO Auto-generated method stub
+		super.onPostExecute(result);
+		
 	}
 	
 	
