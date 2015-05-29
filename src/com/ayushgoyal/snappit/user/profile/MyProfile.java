@@ -446,16 +446,18 @@ public class MyProfile extends Activity implements OnClickListener {
 			Log.i("Images to be synced", syncUpImagePaths.size() + "");
 
 			Log.i("Server Images:", params[0] + ": " + serverImages.toString());
-
+			syncUpImagePaths.add(0, params[0]);
 			return syncUpImagePaths;
 		}
 
 		@Override
 		protected void onPostExecute(ArrayList<String> result) {
 			super.onPostExecute(result);
+			String albumName = result.get(0);
+			result.remove(0);
 			if (result.size() != 0) {
 				DialogFragment syncUpFrag = AlertDialogFragment.newInstance(
-						"Upload " + result.size() + " files?",
+						"Upload " + result.size() + " files to album : "+albumName+" ?",
 						R.layout.sync_up_dialog, result);
 				syncUpFrag.show(getFragmentManager(), "dialog");
 			}
