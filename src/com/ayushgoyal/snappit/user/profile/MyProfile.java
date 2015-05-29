@@ -360,11 +360,16 @@ public class MyProfile extends Activity implements OnClickListener {
 			Log.i("Syncing:", params[0]);
 
 			ArrayList<String> clientImages = new ArrayList<String>();
-			String[] listOfimgClient = new File(mediaStorageDir + "/"
-					+ params[0]).list();
-			for (String img : listOfimgClient) {
-				clientImages.add(img);
+			if (params[0] != null) {
+				String[] listOfimgClient = new File(mediaStorageDir + "/"
+						+ params[0]).list();
+				if (listOfimgClient != null) {
+					for (String img : listOfimgClient) {
+						clientImages.add(img);
+					}
+				}
 			}
+
 			Log.i("Client Images: ", params[0] + ":" + clientImages.toString());
 
 			ArrayList<String> serverImages = new ArrayList<String>();
