@@ -10,6 +10,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -19,6 +22,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -48,6 +52,10 @@ public class MyProfile extends Activity implements OnClickListener {
 	EditText newPassword;
 	EditText confirmNewPassword;
 	static boolean deleteAccount;
+	File mediaStorageDir = new File(
+			Environment
+					.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+					+ "/Snappit/" + Constants.currentUser.getUsername() + "/");
 
 	public static boolean isDeleteAccount() {
 		return deleteAccount;
@@ -109,36 +117,54 @@ public class MyProfile extends Activity implements OnClickListener {
 		// new SyncAccount().execute();
 
 		case R.id.sync_up:
+			Log.i("SYNC UP", "started--------------->>");
 			new SyncUp().execute();
-			
+
 		case R.id.sync_down:
 			new DownloadImage().execute();
-			
 
 		default:
 			break;
 		}
 
 	}
-	
-	class DownloadImage extends AsyncTask<String, Void, Void>{
+
+	class DownloadImage extends AsyncTask<String, Void, Void> {
 
 		@Override
 		protected Void doInBackground(String... params) {
-			String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+			String path = Environment.getExternalStoragePublicDirectory(
+					Environment.DIRECTORY_PICTURES).toString();
 			OutputStream fOut = null;
-			File file = new File(path, "FitnessGirl.jpg"); // the File to save to
+			File file = new File(path, "FitnessGirl.jpg"); // the File to save
+															// to
 			try {
 				fOut = new FileOutputStream(file);
 				String myurl = "http://www.ayushgoyal09.com/webservice/uploadss/f/cloak/IMG_20150521_234035.jpg";
 				URL url = new URL(myurl);
-//				Bitmap pictureBitmap = getImageBitmap(myurl); // obtaining the Bitmap
-				Bitmap pictureBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-				pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+				// Bitmap pictureBitmap = getImageBitmap(myurl); // obtaining
+				// the Bitmap
+				Bitmap pictureBitmap = BitmapFactory.decodeStream(url
+						.openConnection().getInputStream());
+				pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving
+																				// the
+																				// Bitmap
+																				// to
+																				// a
+																				// file
+																				// compressed
+																				// as
+																				// a
+																				// JPEG
+																				// with
+																				// 85%
+																				// compression
+																				// rate
 				fOut.flush();
 				fOut.close(); // do not forget to close the stream
 
-				MediaStore.Images.Media.insertImage(getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
+				MediaStore.Images.Media.insertImage(getContentResolver(),
+						file.getAbsolutePath(), file.getName(), file.getName());
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -149,52 +175,73 @@ public class MyProfile extends Activity implements OnClickListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			return null;
 		}
-		
+
 	}
-	
-	
+
 	private void syncDown() throws IOException {
-		String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+		String path = Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_PICTURES).toString();
 		OutputStream fOut = null;
-		File file = new File(path, "FitnessGirl.jpg"); // the File to save to
+		File file = new File(path, "downloadtest.jpg"); // the File to save to
 		fOut = new FileOutputStream(file);
 		String myurl = "http://www.ayushgoyal09.com/webservice/uploadss/f/cloak/IMG_20150521_234035.jpg";
 		URL url = new URL(myurl);
-//		Bitmap pictureBitmap = getImageBitmap(myurl); // obtaining the Bitmap
-		Bitmap pictureBitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-		pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+		// Bitmap pictureBitmap = getImageBitmap(myurl); // obtaining the Bitmap
+		Bitmap pictureBitmap = BitmapFactory.decodeStream(url.openConnection()
+				.getInputStream());
+		pictureBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving
+																		// the
+																		// Bitmap
+																		// to a
+																		// file
+																		// compressed
+																		// as a
+																		// JPEG
+																		// with
+																		// 85%
+																		// compression
+																		// rate
 		fOut.flush();
 		fOut.close(); // do not forget to close the stream
 
-		MediaStore.Images.Media.insertImage(getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
-		
+		MediaStore.Images.Media.insertImage(getContentResolver(),
+				file.getAbsolutePath(), file.getName(), file.getName());
+
 	}
-	
-	 public static void saveToFile(String filename,Bitmap bmp) {
-	      try {
-	          FileOutputStream out = new FileOutputStream(filename);
-	          bmp.compress(CompressFormat.JPEG, 100, out);
-	          out.flush();
-	          out.close();
-	      } catch(Exception e) {}
-	  }
+
+	public static void saveToFile(String filename, Bitmap bmp) {
+		try {
+			FileOutputStream out = new FileOutputStream(filename);
+			bmp.compress(CompressFormat.JPEG, 100, out);
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+		}
+	}
 
 	public class SyncUp extends AsyncTask<Void, Void, Integer> {
+		ProgressDialog pDialog;
+		ArrayList<String> combinedAlbums = new ArrayList<String>();
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			pDialog = new ProgressDialog(MyProfile.this);
+			pDialog.setMessage("Sync-Up Albums...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(true);
+			pDialog.show();
+		}
 
 		@Override
 		protected Integer doInBackground(Void... params) {
 			Constants.SYNC_UP_CLIENT_IMAGELIST.clear();
 			ArrayList<String> clientAlbums = new ArrayList<String>();
-			ArrayList<String> syncUpImagePaths = new ArrayList<String>();
-			File mediaStorageDir = new File(
-					Environment
-							.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-							+ "/Snappit/"
-							+ Constants.currentUser.getUsername()
-							+ "/");
+
 			Log.i("Media Storage:", mediaStorageDir.getAbsolutePath());
 			// File file = new File("/path/to/directory");
 			String[] directories = mediaStorageDir.list(new FilenameFilter() {
@@ -214,8 +261,6 @@ public class MyProfile extends Activity implements OnClickListener {
 				serverAlbums.add(album.getName());
 			}
 			Log.i("Server Albums:", serverAlbums.toString());
-
-			ArrayList<String> combinedAlbums = new ArrayList<String>();
 
 			for (String album : serverAlbums) {
 				combinedAlbums.add(album);
@@ -250,7 +295,20 @@ public class MyProfile extends Activity implements OnClickListener {
 
 			// 1. Add missing albums to Server
 			for (String album : serverMissingAlbums) {
-				new AddAlbumToDb().execute(new AlbumBean(album));
+				try {
+					int j = new AddAlbumToDb().execute(new AlbumBean(album))
+							.get(1000, TimeUnit.MILLISECONDS);
+					Log.i("J", "" + j);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (TimeoutException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 			// For each album in combined albums
@@ -260,118 +318,145 @@ public class MyProfile extends Activity implements OnClickListener {
 			// upload missing server images
 			// download missing client images
 
-			for (String album : combinedAlbums) {
-
-				ArrayList<String> clientImages = new ArrayList<String>();
-				String[] listOfimgClient = new File(mediaStorageDir + "/" + album)
-						.list();
-				for (String img : listOfimgClient) {
-					clientImages.add(img);
-				}
-				Log.i("Client Images: ", album + ":" + clientImages.toString());
-
-				ArrayList<String> serverImages = new ArrayList<String>();
-				List<NameValuePair> args = new ArrayList<NameValuePair>();
-				args.add(new BasicNameValuePair("username", Constants.currentUser
-						.getUsername()));
-				args.add(new BasicNameValuePair("album", album));
-				JSONObject json = new JSONParser().makeHttpRequest(
-						Constants.URL_get_imagesList, "GET", args);
-
-				int success = 1;
-				if (success == 1) {
-
-					JSONArray images = null;
-					try {
-						images = json.getJSONArray("images");
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					for (int i = 0; i < images.length(); i++) {
-						JSONObject device;
-						try {
-							device = images.getJSONObject(i);
-							serverImages.add(device.getString("name"));
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-					}
-				}
-
-				Log.i("Server Images:", album + ": " + serverImages.toString());
-
-				ArrayList<String> combinedImages = new ArrayList<String>();
-
-				for (String image : serverImages) {
-					combinedImages.add(image);
-				}
-
-				for (String images : clientImages) {
-					if (!combinedImages.contains(images)) {
-						combinedImages.add(images);
-					}
-				}
-				Log.i("Combined Images:", combinedImages.toString());
-
-				ArrayList<String> serverMissingImages = new ArrayList<String>();
-				
-
-				for (String image : combinedImages) {
-					if (!serverImages.contains(image)) {
-						serverMissingImages.add(image);
-						Constants.SYNC_UP_CLIENT_IMAGELIST.add(album+"/"+image);
-						syncUpImagePaths.add(album+"/"+image);
-						
-					}
-				}
-
-				Log.i("Server Missing Images:", serverMissingImages.toString());
-
-				ArrayList<String> clientMissingImages = new ArrayList<String>();
-				
-
-				for (String image : combinedImages) {
-					if (!clientImages.contains(image)) {
-						clientMissingImages.add(image);
-						
-						
-					}
-				}
-
-				Log.i("Client Missing Images:", clientMissingImages.toString());
-				Log.i("Sync Up Images Path:", syncUpImagePaths.toString());
-				
-				Log.i("Images to be synced", syncUpImagePaths.size()+"");
-				
-				
-						
-				
-				
-				
-
-			}
-
-			return syncUpImagePaths.size();
+			return 3;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Integer result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			DialogFragment syncUpFrag = AlertDialogFragment.newInstance(
-					"Upload " + Constants.SYNC_UP_CLIENT_IMAGELIST.size()
-							+ " files?", R.layout.sync_up_dialog);
-			syncUpFrag.show(getFragmentManager(), "dialog");
-			
-			
+			pDialog.dismiss();
+			for (String album : combinedAlbums) {
+				try {
+					ArrayList<String> k = new SyncUpImages().execute(album)
+							.get(1000, TimeUnit.MILLISECONDS);
+					Log.i("K", k + "");
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (TimeoutException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
+	}
+
+	public class SyncUpImages extends
+			AsyncTask<String, Void, ArrayList<String>> {
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+
+		@Override
+		protected ArrayList<String> doInBackground(String... params) {
+			Log.i("Syncing:", params[0]);
+
+			ArrayList<String> clientImages = new ArrayList<String>();
+			String[] listOfimgClient = new File(mediaStorageDir + "/"
+					+ params[0]).list();
+			for (String img : listOfimgClient) {
+				clientImages.add(img);
+			}
+			Log.i("Client Images: ", params[0] + ":" + clientImages.toString());
+
+			ArrayList<String> serverImages = new ArrayList<String>();
+			List<NameValuePair> args = new ArrayList<NameValuePair>();
+			args.add(new BasicNameValuePair("username", Constants.currentUser
+					.getUsername()));
+			args.add(new BasicNameValuePair("album", params[0]));
+			JSONObject json = new JSONParser().makeHttpRequest(
+					Constants.URL_get_imagesList, "GET", args);
+
+			int success = 1;
+			if (success == 1) {
+
+				JSONArray images = null;
+				try {
+					images = json.getJSONArray("images");
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				for (int i = 0; i < images.length(); i++) {
+					JSONObject device;
+					try {
+						device = images.getJSONObject(i);
+						serverImages.add(device.getString("name"));
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+			}
+
+			ArrayList<String> combinedImages = new ArrayList<String>();
+
+			for (String image : serverImages) {
+				combinedImages.add(image);
+			}
+
+			for (String images : clientImages) {
+				if (!combinedImages.contains(images)) {
+					combinedImages.add(images);
+				}
+			}
+			Log.i("Combined Images:", combinedImages.toString());
+
+			ArrayList<String> serverMissingImages = new ArrayList<String>();
+			ArrayList<String> syncUpImagePaths = new ArrayList<String>();
+
+			for (String image : combinedImages) {
+				if (!serverImages.contains(image)) {
+					serverMissingImages.add(image);
+					// Constants.SYNC_UP_CLIENT_IMAGELIST.add(params[0] + "/"
+					// + image);
+					syncUpImagePaths.add(params[0] + "/" + image);
+
+				}
+			}
+
+			Log.i("Server Missing Images:", serverMissingImages.toString());
+
+			ArrayList<String> clientMissingImages = new ArrayList<String>();
+
+			for (String image : combinedImages) {
+				if (!clientImages.contains(image)) {
+					clientMissingImages.add(image);
+
+				}
+			}
+
+			Log.i("Client Missing Images:", clientMissingImages.toString());
+			Log.i("Sync Up Images Path:", syncUpImagePaths.toString());
+
+			Log.i("Images to be synced", syncUpImagePaths.size() + "");
+
+			Log.i("Server Images:", params[0] + ": " + serverImages.toString());
+
+			return syncUpImagePaths;
+		}
+
+		@Override
+		protected void onPostExecute(ArrayList<String> result) {
+			super.onPostExecute(result);
+			if (result.size() != 0) {
+				DialogFragment syncUpFrag = AlertDialogFragment.newInstance(
+						"Upload " + result.size() + " files?",
+						R.layout.sync_up_dialog, result);
+				syncUpFrag.show(getFragmentManager(), "dialog");
+			}
 		}
 
 	}
-	
-	
 
 	private boolean checkPasswordFields() {
 		Log.i("Password field Inputs", currentPasswordText + newPasswordText

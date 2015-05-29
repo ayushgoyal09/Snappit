@@ -8,6 +8,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -16,7 +18,21 @@ import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.util.Constants;
 
 public class AddAlbumToDb extends AsyncTask<AlbumBean,String, Integer>{
-
+	ProgressDialog pDialog;
+	
+	
+//	public AddAlbumToDb(Context context) {
+//		this.context = context;
+//	}
+	
+	@Override
+	protected void onPreExecute() {
+		// TODO Auto-generated method stub
+		super.onPreExecute();
+		
+	}
+	
+	
 	@Override
 	protected Integer doInBackground(AlbumBean... albums) {
 
@@ -45,6 +61,12 @@ public class AddAlbumToDb extends AsyncTask<AlbumBean,String, Integer>{
 
 		return result;
 
+	}
+	
+	@Override
+	protected void onPostExecute(Integer result) {
+		// TODO Auto-generated method stub
+		super.onPostExecute(result);
 	}
 
 }

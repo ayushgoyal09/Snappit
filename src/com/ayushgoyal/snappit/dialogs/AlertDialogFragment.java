@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.ayushgoyal.snappit.R;
+import com.ayushgoyal.snappit.Snappit;
 import com.ayushgoyal.snappit.album.AddAlbumToDb;
 import com.ayushgoyal.snappit.album.Albums;
 import com.ayushgoyal.snappit.album.AlbumsGridViewAdapter;
@@ -129,12 +130,16 @@ public class AlertDialogFragment extends DialogFragment {
 													.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
 													+ "/"
 													+ Constants.APP_NAME
+													+ "/"
+													+ Constants.currentUser.getUsername()
 													+ "/" + albumName);
 									Log.i("ALBUM PATH: ",
 											Environment
 													.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
 													+ "/"
 													+ Constants.APP_NAME
+													+ "/"
+													+ Constants.currentUser.getUsername()
 													+ "/" + albumName);
 									if (!albumLocalDirectory.exists()) {
 										albumLocalDirectory.mkdir();
@@ -208,12 +213,15 @@ public class AlertDialogFragment extends DialogFragment {
 													+ Constants.currentUser
 															.getUsername()
 													+ "/");
-									for (String image : Constants.SYNC_UP_CLIENT_IMAGELIST) {
-										String path = mediaStorageDir+"/"+image;
+									for (String image : dataList) {
+										String path = mediaStorageDir + "/"
+												+ image;
 										Log.i("SYNC UP IMAGE:", path);
-										String album = image.substring(0,image.lastIndexOf("/"));
+										String album = image.substring(0,
+												image.lastIndexOf("/"));
 										Log.i("ALBUM:", album);
-										new UploadSyncUpImages().execute(album,path);
+										new UploadSyncUpImages().execute(album,
+												path);
 									}
 
 								default:

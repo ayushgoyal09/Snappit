@@ -90,7 +90,7 @@ public class SyncAccount extends AsyncTask<Void, Void, Void>{
 		
 		//1. Add missing albums to Server
 		for(String album: serverMissingAlbums){
-			new AddAlbumToDb().execute(new AlbumBean(album));
+//			new AddAlbumToDb().execute(new AlbumBean(album));
 		}
 		
 		//2. Add missing albums to client
