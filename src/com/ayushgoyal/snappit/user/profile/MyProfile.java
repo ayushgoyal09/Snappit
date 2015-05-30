@@ -121,7 +121,9 @@ public class MyProfile extends Activity implements OnClickListener {
 			new SyncUp().execute();
 
 		case R.id.sync_down:
-			new DownloadImage().execute();
+//			 new DownloadImage().execute();
+//			new com.ayushgoyal.snappit.image.DownloadImage().execute();
+			new SyncDown().execute();
 
 		default:
 			break;
@@ -129,18 +131,22 @@ public class MyProfile extends Activity implements OnClickListener {
 
 	}
 
-	class DownloadImage extends AsyncTask<String, Void, Void> {
+	public class DownloadImage extends AsyncTask<String, Void, Void> {
 
 		@Override
 		protected Void doInBackground(String... params) {
-			String path = Environment.getExternalStoragePublicDirectory(
-					Environment.DIRECTORY_PICTURES).toString();
+//			String path = Environment.getExternalStoragePublicDirectory(
+//					Environment.DIRECTORY_PICTURES).toString();
+			String path = params[0];
+			String image = params[1];
+			String album = params[2];
 			OutputStream fOut = null;
-			File file = new File(path, "FitnessGirl.jpg"); // the File to save
+			File file = new File(path); // the File to save
 															// to
+			Log.i("File:", file.getAbsolutePath());
 			try {
 				fOut = new FileOutputStream(file);
-				String myurl = "http://www.ayushgoyal09.com/webservice/uploadss/f/cloak/IMG_20150521_234035.jpg";
+				String myurl = "http://www.ayushgoyal09.com/webservice/uploadss/"+Constants.currentUser.getUsername()+"/"+album+"/"+image;
 				URL url = new URL(myurl);
 				// Bitmap pictureBitmap = getImageBitmap(myurl); // obtaining
 				// the Bitmap
@@ -163,8 +169,8 @@ public class MyProfile extends Activity implements OnClickListener {
 				fOut.flush();
 				fOut.close(); // do not forget to close the stream
 
-				MediaStore.Images.Media.insertImage(getContentResolver(),
-						file.getAbsolutePath(), file.getName(), file.getName());
+//				MediaStore.Images.Media.insertImage(getContentResolver(),
+//						file.getAbsolutePath(), file.getName(), file.getName());
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -250,9 +256,13 @@ public class MyProfile extends Activity implements OnClickListener {
 					return new File(current, name).isDirectory();
 				}
 			});
-			for (String album : directories) {
-				clientAlbums.add(album);
+
+			if (directories != null) {
+				for (String album : directories) {
+					clientAlbums.add(album);
+				}
 			}
+
 			Log.i("Client albums:", clientAlbums.toString());
 
 			Log.i("Current User:", Constants.currentUser.getUsername());
@@ -341,6 +351,120 @@ public class MyProfile extends Activity implements OnClickListener {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+
+		}
+	}
+
+	public class SyncDown extends AsyncTask<Void, Void, Integer> {
+		ProgressDialog pDialog;
+		ArrayList<String> combinedAlbums = new ArrayList<String>();
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			pDialog = new ProgressDialog(MyProfile.this);
+			pDialog.setMessage("Sync-Up Albums...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(true);
+			pDialog.show();
+		}
+
+		@Override
+		protected Integer doInBackground(Void... params) {
+
+			// Check if App directory exists, if not create one.
+			File snappitDirectory = new File(
+					Environment
+							.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+							+ "/Snappit/");
+			if (!snappitDirectory.exists()) {
+				snappitDirectory.mkdir();
+				Log.i("Directory created:", " Snappit app directory");
+			}
+
+			// Check if user directory exists, if not create one.
+			File userDir = new File(
+					Environment
+							.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+							+ "/Snappit/" + Constants.currentUser.getUsername());
+			if (!userDir.exists()) {
+				userDir.mkdir();
+			}
+
+			ArrayList<String> clientAlbums = new ArrayList<String>();
+			Log.i("Media Storage:", mediaStorageDir.getAbsolutePath());
+			// File file = new File("/path/to/directory");
+			String[] directories = mediaStorageDir.list(new FilenameFilter() {
+				@Override
+				public boolean accept(File current, String name) {
+					return new File(current, name).isDirectory();
+				}
+			});
+
+			if (directories != null) {
+				for (String album : directories) {
+					clientAlbums.add(album);
+				}
+			}
+
+			Log.i("Client albums:", clientAlbums.toString());
+
+			Log.i("Current User:", Constants.currentUser.getUsername());
+			ArrayList<String> serverAlbums = new ArrayList<String>();
+			for (AlbumBean album : Constants.ALBUM_LIST) {
+				serverAlbums.add(album.getName());
+			}
+			Log.i("Server Albums:", serverAlbums.toString());
+
+			for (String album : serverAlbums) {
+				combinedAlbums.add(album);
+			}
+
+			for (String album : clientAlbums) {
+				if (!combinedAlbums.contains(album)) {
+					combinedAlbums.add(album);
+				}
+			}
+			Log.i("Combined Albums:", combinedAlbums.toString());
+
+			ArrayList<String> serverMissingAlbums = new ArrayList<String>();
+
+			for (String album : combinedAlbums) {
+				if (!serverAlbums.contains(album)) {
+					serverMissingAlbums.add(album);
+				}
+			}
+
+			Log.i("Server Missing Albums:", serverMissingAlbums.toString());
+
+			ArrayList<String> clientMissingAlbums = new ArrayList<String>();
+
+			for (String album : combinedAlbums) {
+				if (!clientAlbums.contains(album)) {
+					clientMissingAlbums.add(album);
+				}
+			}
+
+			Log.i("Client Missing Albums:", clientMissingAlbums.toString());
+
+			// 1. Add missing albums to client
+			if (clientMissingAlbums != null) {
+				for (String album : clientMissingAlbums) {
+					new File(mediaStorageDir + "/" + album).mkdir();
+				}
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Integer result) {
+			super.onPostExecute(result);
+			pDialog.dismiss();
+			for (String album : combinedAlbums) {
+				new SyncDownImages().execute(album);
 			}
 
 		}
@@ -457,12 +581,120 @@ public class MyProfile extends Activity implements OnClickListener {
 			result.remove(0);
 			if (result.size() != 0) {
 				DialogFragment syncUpFrag = AlertDialogFragment.newInstance(
-						"Upload " + result.size() + " files to album : "+albumName+" ?",
-						R.layout.sync_up_dialog, result);
+						"Upload " + result.size() + " images to album : "
+								+ albumName + " ?", R.layout.sync_up_dialog,
+						result);
 				syncUpFrag.show(getFragmentManager(), "dialog");
 			}
 		}
 
+	}
+
+	public class SyncDownImages extends
+			AsyncTask<String, Void, ArrayList<String>> {
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+
+		@Override
+		protected ArrayList<String> doInBackground(String... params) {
+			Log.i("Syncing Down:", params[0]);
+
+			ArrayList<String> clientImages = new ArrayList<String>();
+			if (params[0] != null) {
+				String[] listOfimgClient = new File(mediaStorageDir + "/"
+						+ params[0]).list();
+				if (listOfimgClient != null) {
+					for (String img : listOfimgClient) {
+						clientImages.add(img);
+					}
+				}
+			}
+
+			Log.i("Client Images: ", params[0] + ":" + clientImages.toString());
+
+			ArrayList<String> serverImages = new ArrayList<String>();
+			List<NameValuePair> args = new ArrayList<NameValuePair>();
+			args.add(new BasicNameValuePair("username", Constants.currentUser
+					.getUsername()));
+			args.add(new BasicNameValuePair("album", params[0]));
+			JSONObject json = new JSONParser().makeHttpRequest(
+					Constants.URL_get_imagesList, "GET", args);
+
+			int success = 1;
+			if (success == 1) {
+
+				JSONArray images = null;
+				try {
+					images = json.getJSONArray("images");
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				for (int i = 0; i < images.length(); i++) {
+					JSONObject device;
+					try {
+						device = images.getJSONObject(i);
+						serverImages.add(device.getString("name"));
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+			}
+			Log.i("Server Images:", serverImages.toString());
+
+			ArrayList<String> combinedImages = new ArrayList<String>();
+
+			for (String image : serverImages) {
+				combinedImages.add(image);
+			}
+
+			for (String images : clientImages) {
+				if (!combinedImages.contains(images)) {
+					combinedImages.add(images);
+				}
+			}
+			Log.i("Combined Images:", combinedImages.toString());
+
+			ArrayList<String> clientMissingImages = new ArrayList<String>();
+			ArrayList<String> syncUpImagePaths = new ArrayList<String>();
+
+			for (String image : combinedImages) {
+				if (!clientImages.contains(image)) {
+					clientMissingImages.add(image);
+					// Constants.SYNC_UP_CLIENT_IMAGELIST.add(params[0] + "/"
+					// + image);
+					syncUpImagePaths.add(params[0] + "/" + image);
+
+				}
+			}
+
+			Log.i("Client Missing Images:", clientMissingImages.toString());
+			Log.i("Sync DOWN Images Path:", syncUpImagePaths.toString());
+			Log.i("Images to be synced", syncUpImagePaths.size() + "");
+			Log.i("Client Images:", params[0] + ": " + clientImages.toString());
+			syncUpImagePaths.add(0, params[0]);
+			return syncUpImagePaths;
+		}
+
+		@Override
+		protected void onPostExecute(ArrayList<String> result) {
+			super.onPostExecute(result);
+			String albumName = result.get(0);
+			result.remove(0);
+			if (result.size() != 0) {
+				DialogFragment syncDownFrag = AlertDialogFragment.newInstance(
+						"Download " + result.size() + " images to album : "
+								+ albumName + " ?", R.layout.sync_down_dialog,
+						result);
+				syncDownFrag.show(getFragmentManager(), "dialog");
+			}
+		}
 	}
 
 	private boolean checkPasswordFields() {

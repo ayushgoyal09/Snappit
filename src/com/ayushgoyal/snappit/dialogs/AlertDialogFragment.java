@@ -33,6 +33,8 @@ import com.ayushgoyal.snappit.album.RenameAlbum;
 import com.ayushgoyal.snappit.beans.AlbumBean;
 import com.ayushgoyal.snappit.image.UploadSyncUpImages;
 import com.ayushgoyal.snappit.user.profile.DeleteUserAccount;
+import com.ayushgoyal.snappit.user.profile.MyProfile;
+import com.ayushgoyal.snappit.user.profile.MyProfile.DownloadImage;
 import com.ayushgoyal.snappit.util.Constants;
 
 public class AlertDialogFragment extends DialogFragment {
@@ -223,6 +225,29 @@ public class AlertDialogFragment extends DialogFragment {
 										new UploadSyncUpImages().execute(album,
 												path);
 									}
+									break;
+									
+								case R.layout.sync_down_dialog:
+									File mediaStorageDirectory = new File(
+											Environment
+													.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+													+ "/Snappit/"
+													+ Constants.currentUser
+															.getUsername()
+													+ "/");
+									for (String image : dataList) {
+										String path = mediaStorageDirectory + "/"
+												+ image;
+										Log.i("SYNC Down IMAGE:", path);
+										String album = image.substring(0,
+												image.lastIndexOf("/"));
+										Log.i("ALBUM:", album);
+										String imageName = image.substring(image.lastIndexOf("/")+1);
+										Log.i("IMAGE:", imageName);
+										MyProfile x = new MyProfile();
+										x.new DownloadImage().execute(path,imageName,album);
+									}
+									break;
 
 								default:
 									break;
