@@ -63,7 +63,8 @@ import com.ayushgoyal.snappit.util.Constants;
 public class Snappit extends Activity implements OnClickListener {
 
 	private ProgressDialog pDialog;
-//	private static final String URL = "http://www.ayushgoyal09.com/webservice/upload_image2.php";
+	// private static final String URL =
+	// "http://www.ayushgoyal09.com/webservice/upload_image2.php";
 	private static final String URL = "http://www.ayushgoyal09.com/webservice/fileUpload2.php";
 	private static final String URL_get_imagesList = "http://www.ayushgoyal09.com/webservice/get_all_images1.php";
 	private static final String UPLOADS_FOLDER = "http://www.ayushgoyal09.com/webservice/uploadss/";
@@ -78,7 +79,7 @@ public class Snappit extends Activity implements OnClickListener {
 	private Uri fileUri;
 	public GridView thumbnails;
 	private Button takePictureButton;
-	public static Bitmap testImage;
+//	public static Bitmap testImage;
 	public static ArrayList<Bitmap> allImages = new ArrayList<Bitmap>();
 	ActionMode mActionMode;
 	ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -114,25 +115,31 @@ public class Snappit extends Activity implements OnClickListener {
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 			switch (item.getItemId()) {
 			case R.id.action_delete:
-//				DialogFragment deleteAlbumFragment = AlertDialogFragment.newInstance("Delete Album "+selectedItem.getTitle(), R.layout.delete_album_dialog);
-//				deleteAlbumFragment.show(albumActivity.getFragmentManager(), "dialog");
-//				mode.finish();
-//				return true;
-				
+				// DialogFragment deleteAlbumFragment =
+				// AlertDialogFragment.newInstance("Delete Album "+selectedItem.getTitle(),
+				// R.layout.delete_album_dialog);
+				// deleteAlbumFragment.show(albumActivity.getFragmentManager(),
+				// "dialog");
+				// mode.finish();
+				// return true;
+
 			case R.id.action_edit:
-//				Log.i("SELECTED ITEM:", selectedItem.getTitle());
-//				Constants.RENAME_ITEM = selectedItem.getTitle();
-//				Log.i("RENAME ITEM:", selectedItem.getTitle());
-//				DialogFragment newFragment = AlertDialogFragment.newInstance("Rename Album", R.layout.rename_album_dialog);
-//				newFragment.show(albumActivity.getFragmentManager(), "dialog");
-//				break;
-				
-//				new RenameAlbum().execute(selectedItem.getTitle(),"renamed");
-//				ArrayList<String> names = new ArrayList<String>();
-//				for(AlbumBean bean: Constants.ALBUM_LIST){
-//					names.add(bean.getName());
-//				}
-//				Log.i("ALBUMS LIST GLOBAL:", names.toString());
+				// Log.i("SELECTED ITEM:", selectedItem.getTitle());
+				// Constants.RENAME_ITEM = selectedItem.getTitle();
+				// Log.i("RENAME ITEM:", selectedItem.getTitle());
+				// DialogFragment newFragment =
+				// AlertDialogFragment.newInstance("Rename Album",
+				// R.layout.rename_album_dialog);
+				// newFragment.show(albumActivity.getFragmentManager(),
+				// "dialog");
+				// break;
+
+				// new RenameAlbum().execute(selectedItem.getTitle(),"renamed");
+				// ArrayList<String> names = new ArrayList<String>();
+				// for(AlbumBean bean: Constants.ALBUM_LIST){
+				// names.add(bean.getName());
+				// }
+				// Log.i("ALBUMS LIST GLOBAL:", names.toString());
 				mode.finish();
 				return true;
 
@@ -142,16 +149,15 @@ public class Snappit extends Activity implements OnClickListener {
 		}
 	};
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
 		String album = intent.getStringExtra("album");
-		if(album!=null){
+		if (album != null) {
 			Log.i("Album:", album);
-			Constants.CURRENT_ALBUM = album;	
+			Constants.CURRENT_ALBUM = album;
 		}
 		Log.i("User:", Constants.currentUser.getUsername());
 		setContentView(R.layout.home_screen);
@@ -162,96 +168,107 @@ public class Snappit extends Activity implements OnClickListener {
 		new DisplayImages().execute();
 		thumbnails.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
 		thumbnails.setMultiChoiceModeListener(new MultiChoiceModeListener() {
-			
+
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 				// TODO Auto-generated method stub
 				return false;
 			}
-			
+
 			@Override
 			public void onDestroyActionMode(ActionMode mode) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 				MenuInflater inflater = mode.getMenuInflater();
 				inflater.inflate(R.menu.context_action_images, menu);
 				return true;
 			}
-			
+
 			@Override
 			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-				String numberOfImagesSelected = thumbnails.getCheckedItemCount()+"";
-				SparseBooleanArray checkedItems = thumbnails.getCheckedItemPositions();
+				String numberOfImagesSelected = thumbnails
+						.getCheckedItemCount() + "";
+				SparseBooleanArray checkedItems = thumbnails
+						.getCheckedItemPositions();
 				ArrayList<String> selectedImageNameList = new ArrayList<String>();
-				if(checkedItems!=null){
-					for(int i=0;i<checkedItems.size();i++){
-						if(checkedItems.valueAt(i)){
-//							String img = thumbnails.getAdapter().getIma(checkedItems.keyAt(i)).toString();
-							String img = image_urls.get(checkedItems.keyAt(i)).toString();
-							img = img.substring(img.lastIndexOf("/")+1);
+				if (checkedItems != null) {
+					for (int i = 0; i < checkedItems.size(); i++) {
+						if (checkedItems.valueAt(i)) {
+							// String img =
+							// thumbnails.getAdapter().getIma(checkedItems.keyAt(i)).toString();
+							String img = image_urls.get(checkedItems.keyAt(i))
+									.toString();
+							img = img.substring(img.lastIndexOf("/") + 1);
 							selectedImageNameList.add(img);
-							
+
 						}
 					}
 				}
-				
+
 				switch (item.getItemId()) {
 				case R.id.action_delete:
-					
-					
-					DialogFragment deleteImagesFragment = AlertDialogFragment.newInstance("Delete "+numberOfImagesSelected+" images" , R.layout.delete_image_dialog, selectedImageNameList);
+
+					DialogFragment deleteImagesFragment = AlertDialogFragment
+							.newInstance("Delete " + numberOfImagesSelected
+									+ " images", R.layout.delete_image_dialog,
+									selectedImageNameList);
 					deleteImagesFragment.show(getFragmentManager(), "dialog");
 					mode.finish();
 					return true;
-					
+
 				case R.id.action_edit:
-					
-					DialogFragment moveImagesFragment = AlertDialogFragment.newInstance("Move "+numberOfImagesSelected+" images", R.layout.move_images_dialog, selectedImageNameList);
+
+					DialogFragment moveImagesFragment = AlertDialogFragment
+							.newInstance("Move " + numberOfImagesSelected
+									+ " images", R.layout.move_images_dialog,
+									selectedImageNameList);
 					moveImagesFragment.show(getFragmentManager(), "dialog");
-					
+
 					mode.finish();
 					return true;
 				}
 				return false;
 			}
-			
+
 			@Override
-			public void onItemCheckedStateChanged(ActionMode mode, int position,
-					long id, boolean checked) {
+			public void onItemCheckedStateChanged(ActionMode mode,
+					int position, long id, boolean checked) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
-		
-		
+
 		thumbnails.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-//				Intent intent = new Intent(getApplicationContext(), FullScreenImage.class);
-				Intent intent = new Intent(getApplicationContext(), ImageSlidePagerActivity.class);
+				// Intent intent = new Intent(getApplicationContext(),
+				// FullScreenImage.class);
+				Intent intent = new Intent(getApplicationContext(),
+						ImageSlidePagerActivity.class);
 				intent.putExtra("position", position);
 				startActivity(intent);
-				
+
 			}
 		});
-		
-//		thumbnails.setOnItemLongClickListener(new OnItemLongClickListener() {
-//
-//			@Override
-//			public boolean onItemLongClick(AdapterView<?> parent, View view,
-//					int position, long id) {
-//				parent.startActionMode(mActionModeCallback);
-//				return true;
-//			}
-//		});
-		
+
+		// thumbnails.setOnItemLongClickListener(new OnItemLongClickListener() {
+		//
+		// @Override
+		// public boolean onItemLongClick(AdapterView<?> parent, View view,
+		// int position, long id) {
+		// parent.startActionMode(mActionModeCallback);
+		// return true;
+		// }
+		// });
+
 	}
+
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
@@ -299,14 +316,15 @@ public class Snappit extends Activity implements OnClickListener {
 					Uri contentUri = Uri.fromFile(f);
 					mediaScanIntent.setData(contentUri);
 					this.sendBroadcast(mediaScanIntent);
-					ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+					ConnectionDetector cd = new ConnectionDetector(
+							getApplicationContext());
 					if (!cd.isConnectingToInternet()) {
 						DialogFragment newFragment = AlertDialogFragment
 								.newInstance("Internet Connection Error",
 										R.layout.internet_error_dialog);
 						newFragment.show(getFragmentManager(), "dialog");
-					}else{
-					new UploadImage().execute();
+					} else {
+						new UploadImage().execute();
 					}
 
 					// Image captured and saved to fileUri specified in the
@@ -341,7 +359,11 @@ public class Snappit extends Activity implements OnClickListener {
 		// using Environment.getExternalStorageState() before doing this.
 
 		File mediaStorageDir = new File(
-			Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/Snappit/" + Constants.currentUser.getUsername() + "/" + Constants.CURRENT_ALBUM);
+				Environment
+						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+						+ "/Snappit/"
+						+ Constants.currentUser.getUsername()
+						+ "/" + Constants.CURRENT_ALBUM);
 		Log.i("Media Storage:", mediaStorageDir.getAbsolutePath());
 		// This location works best if you want the created images to be shared
 		// between applications and persist after your app has been uninstalled.
@@ -409,46 +431,48 @@ public class Snappit extends Activity implements OnClickListener {
 		@SuppressWarnings("deprecation")
 		@Override
 		protected String doInBackground(String... arg0) {
-			
+
 			String responseString = null;
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = new HttpPost(URL);
-			try{
-			AndroidMultiPartEntity entity = new AndroidMultiPartEntity(new ProgressListener() {
-				
-				@Override
-				public void transferred(long num) {
-					// TODO Auto-generated method stub
-					
+			try {
+				AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+						new ProgressListener() {
+
+							@Override
+							public void transferred(long num) {
+								// TODO Auto-generated method stub
+
+							}
+						});
+
+				File sourceFile = new File(mCurrentPhotoPath);
+				Log.i("SOURCE FILE PATH:", sourceFile.toString());
+
+				// Adding file data to http body
+				entity.addPart("image", new FileBody(sourceFile));
+
+				// Extra parameters if you want to pass to server
+				entity.addPart("username",
+						new StringBody(Constants.currentUser.getUsername()));
+				entity.addPart("album", new StringBody(Constants.CURRENT_ALBUM));
+
+				long totalSize = entity.getContentLength();
+				httppost.setEntity(entity);
+
+				// Making server call
+				HttpResponse response = httpclient.execute(httppost);
+				HttpEntity r_entity = response.getEntity();
+
+				int statusCode = response.getStatusLine().getStatusCode();
+				if (statusCode == 200) {
+					// Server response
+					responseString = EntityUtils.toString(r_entity);
+				} else {
+					responseString = "Error occurred! Http Status Code: "
+							+ statusCode;
 				}
-			});
-					
-			File sourceFile = new File(mCurrentPhotoPath);
-			Log.i("SOURCE FILE PATH:", sourceFile.toString());
-			
-			// Adding file data to http body
-			entity.addPart("image", new FileBody(sourceFile));
-			
-			// Extra parameters if you want to pass to server
-			entity.addPart("username", new StringBody(Constants.currentUser.getUsername()));
-			entity.addPart("album", new StringBody(Constants.CURRENT_ALBUM));
-			
-			long totalSize = entity.getContentLength();
-			httppost.setEntity(entity);
 
-			// Making server call
-			HttpResponse response = httpclient.execute(httppost);
-			HttpEntity r_entity = response.getEntity();
-
-			int statusCode = response.getStatusLine().getStatusCode();
-			if (statusCode == 200) {
-				// Server response
-				responseString = EntityUtils.toString(r_entity);
-			} else {
-				responseString = "Error occurred! Http Status Code: "
-						+ statusCode;
-			}
-			
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -469,11 +493,12 @@ public class Snappit extends Activity implements OnClickListener {
 			toast.show();
 			new DisplayImages().execute();
 			runOnUiThread(new Runnable() {
-				
+
 				@Override
 				public void run() {
-					new ThumbnailAdapter(getApplicationContext()).notifyDataSetChanged();
-					
+					new ThumbnailAdapter(getApplicationContext())
+							.notifyDataSetChanged();
+
 				}
 			});
 
@@ -488,8 +513,10 @@ public class Snappit extends Activity implements OnClickListener {
 			URL url;
 			try {
 				List<NameValuePair> args = new ArrayList<NameValuePair>();
-				args.add(new BasicNameValuePair("username", Constants.currentUser.getUsername()));
-				args.add(new BasicNameValuePair("album",Constants.CURRENT_ALBUM));
+				args.add(new BasicNameValuePair("username",
+						Constants.currentUser.getUsername()));
+				args.add(new BasicNameValuePair("album",
+						Constants.CURRENT_ALBUM));
 				JSONObject json = new JSONParser().makeHttpRequest(
 						URL_get_imagesList, "GET", args);
 				Log.i("Output", json.toString());
@@ -499,13 +526,16 @@ public class Snappit extends Activity implements OnClickListener {
 					images = json.getJSONArray(TAG_IMAGES);
 					for (int i = 0; i < images.length(); i++) {
 						JSONObject device = images.getJSONObject(i);
-						String name = UPLOADS_FOLDER+Constants.currentUser.getUsername()+"/"+Constants.CURRENT_ALBUM+"/"+device.getString("name");
-						Log.i("image",name);
-						if(!image_urls.contains(name)){
-						
-						image_urls.add(name);
+						String name = UPLOADS_FOLDER
+								+ Constants.currentUser.getUsername() + "/"
+								+ Constants.CURRENT_ALBUM + "/"
+								+ device.getString("name");
+						Log.i("image", name);
+						if (!image_urls.contains(name)) {
 
-						Log.i("Imagelog: ", image_urls.get(i).toString());
+							image_urls.add(name);
+
+							Log.i("Imagelog: ", image_urls.get(i).toString());
 						}
 					}
 
@@ -520,10 +550,13 @@ public class Snappit extends Activity implements OnClickListener {
 					connection.setDoInput(true);
 					connection.connect();
 					InputStream input = connection.getInputStream();
+					Bitmap testImage = null;
 					testImage = BitmapFactory.decodeStream(input);
-					allImages.add(Bitmap.createScaledBitmap(testImage, 250,
-							250, true));
-					i++;
+					if (testImage != null) {
+						allImages.add(Bitmap.createScaledBitmap(testImage, 250,
+								250, true));
+						i++;
+					}
 				}
 
 			} catch (MalformedURLException e) {

@@ -222,7 +222,7 @@ public class AlertDialogFragment extends DialogFragment {
 										String album = image.substring(0,
 												image.lastIndexOf("/"));
 										Log.i("ALBUM:", album);
-										new UploadSyncUpImages().execute(album,
+										new UploadSyncUpImages(getActivity()).execute(album,
 												path);
 									}
 									break;
@@ -245,7 +245,7 @@ public class AlertDialogFragment extends DialogFragment {
 										String imageName = image.substring(image.lastIndexOf("/")+1);
 										Log.i("IMAGE:", imageName);
 										MyProfile x = new MyProfile();
-										x.new DownloadImage().execute(path,imageName,album);
+										x.new DownloadImage(getActivity()).execute(path,imageName,album);
 									}
 									break;
 

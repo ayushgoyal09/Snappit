@@ -12,13 +12,14 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.ayushgoyal.snappit.AndroidMultiPartEntity;
 import com.ayushgoyal.snappit.AndroidMultiPartEntity.ProgressListener;
-import com.ayushgoyal.snappit.adapters.ThumbnailAdapter;
 import com.ayushgoyal.snappit.util.Constants;
 
 
@@ -26,9 +27,32 @@ import com.ayushgoyal.snappit.util.Constants;
 public class UploadSyncUpImages extends AsyncTask<String, String, String> {
 
 	private static final String URL = "http://www.ayushgoyal09.com/webservice/fileUpload2.php";
+	ProgressDialog pDialog;
+	Activity activity;
+	
+	public UploadSyncUpImages(Activity activity){	
+		this.activity = activity;
+	}
+	
+	@Override
+	protected void onPreExecute() {
+		// TODO Auto-generated method stub
+		super.onPreExecute();
+		pDialog = new ProgressDialog(activity);
+		pDialog.setMessage("Upload Image in progress...");
+		pDialog.setIndeterminate(false);
+		pDialog.setCancelable(true);
+		pDialog.show();
+	}
+	
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected String doInBackground(String... arg0) {
+		
+		
+		Log.i("album:", arg0[0]);
+		Log.i("File path:", arg0[1]);
 		
 		String responseString = null;
 		HttpClient httpclient = new DefaultHttpClient();
@@ -83,10 +107,10 @@ public class UploadSyncUpImages extends AsyncTask<String, String, String> {
 	protected void onPostExecute(String result) {
 		Log.i("SERVER RESPONSE:", "DONEEEEEEEEEEEE");
 		// dismiss the dialog once done
-//		pDialog.dismiss();
-//		Toast toast = Toast.makeText(getApplicationContext(),
-//				"Image added Successfully!", Toast.LENGTH_SHORT);
-//		toast.show();
+		pDialog.dismiss();
+		Toast toast = Toast.makeText(activity,
+				"Image synced up Successfully!", Toast.LENGTH_SHORT);
+		toast.show();
 //		new DisplayImages().execute();
 //		runOnUiThread(new Runnable() {
 //			

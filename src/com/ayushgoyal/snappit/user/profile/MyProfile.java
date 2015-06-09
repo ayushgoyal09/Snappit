@@ -119,11 +119,13 @@ public class MyProfile extends Activity implements OnClickListener {
 		case R.id.sync_up:
 			Log.i("SYNC UP", "started--------------->>");
 			new SyncUp().execute();
+			break;
 
 		case R.id.sync_down:
 //			 new DownloadImage().execute();
 //			new com.ayushgoyal.snappit.image.DownloadImage().execute();
 			new SyncDown().execute();
+			break;
 
 		default:
 			break;
@@ -133,6 +135,24 @@ public class MyProfile extends Activity implements OnClickListener {
 
 	public class DownloadImage extends AsyncTask<String, Void, Void> {
 
+		ProgressDialog pDialog;
+		Activity activity;
+		
+		public DownloadImage(Activity activity) {
+			this.activity = activity;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			pDialog = new ProgressDialog(activity);
+			pDialog.setMessage("Download Image in progress...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(true);
+			pDialog.show();
+		}
+		
 		@Override
 		protected Void doInBackground(String... params) {
 //			String path = Environment.getExternalStoragePublicDirectory(
@@ -183,6 +203,16 @@ public class MyProfile extends Activity implements OnClickListener {
 			}
 
 			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			pDialog.dismiss();
+			Toast toast = Toast.makeText(activity,
+					"Image downloaded Successfully!", Toast.LENGTH_SHORT);
+			toast.show();
 		}
 
 	}
@@ -339,7 +369,7 @@ public class MyProfile extends Activity implements OnClickListener {
 			for (String album : combinedAlbums) {
 				try {
 					ArrayList<String> k = new SyncUpImages().execute(album)
-							.get(1000, TimeUnit.MILLISECONDS);
+							.get(3000, TimeUnit.MILLISECONDS);
 					Log.i("K", k + "");
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
