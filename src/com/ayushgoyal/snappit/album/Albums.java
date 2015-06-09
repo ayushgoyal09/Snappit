@@ -63,11 +63,14 @@ public class Albums extends Activity {
 		case R.id.action_profile:
 			Intent intent = new Intent(getApplicationContext(), MyProfile.class);
 			startActivity(intent);
+			break;
 			
 		case R.id.action_sort:
 			Toast.makeText(getApplicationContext(), "SORT", Toast.LENGTH_SHORT).show();
 			Collections.sort(albums);
 			Albums.gridViewAdapter.notifyDataSetChanged();
+			break;
+		
 		default:
 			return super.onOptionsItemSelected(item);
 
