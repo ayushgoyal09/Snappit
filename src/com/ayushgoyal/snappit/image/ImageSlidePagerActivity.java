@@ -39,11 +39,7 @@ public class ImageSlidePagerActivity extends FragmentActivity{
 	
 	@Override
 	public void onBackPressed() {
-		if (mPager.getCurrentItem() == 0) {
 			super.onBackPressed();
-		} else {
-			mPager.setCurrentItem(mPager.getCurrentItem() - 1);
-		}
 	}
 	
 
