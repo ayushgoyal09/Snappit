@@ -45,12 +45,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView.MultiChoiceModeListener;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ayushgoyal.snappit.AndroidMultiPartEntity.ProgressListener;
@@ -63,6 +65,7 @@ import com.ayushgoyal.snappit.util.Constants;
 public class Snappit extends Activity implements OnClickListener {
 
 	private ProgressDialog pDialog;
+//	public static Adapter adapter;
 	// private static final String URL =
 	// "http://www.ayushgoyal09.com/webservice/upload_image2.php";
 	private static final String URL = "http://www.ayushgoyal09.com/webservice/fileUpload2.php";
@@ -148,6 +151,11 @@ public class Snappit extends Activity implements OnClickListener {
 			}
 		}
 	};
+	
+	public void refreshThumbnailAdapter(){
+		ThumbnailAdapter thumbsAdapter = new ThumbnailAdapter(Snappit.this);
+		thumbsAdapter.notifyDataSetChanged();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +170,8 @@ public class Snappit extends Activity implements OnClickListener {
 		Log.i("User:", Constants.currentUser.getUsername());
 		setContentView(R.layout.home_screen);
 		Log.i("size of images", "" + image_urls.size());
+		TextView headingText = (TextView) findViewById(R.id.my_albums_textview);
+		headingText.setText("Album - "+Constants.CURRENT_ALBUM);
 		thumbnails = (GridView) findViewById(R.id.image_grid);
 		takePictureButton = (Button) findViewById(R.id.camera_button);
 		takePictureButton.setOnClickListener(this);
@@ -195,6 +205,7 @@ public class Snappit extends Activity implements OnClickListener {
 				SparseBooleanArray checkedItems = thumbnails
 						.getCheckedItemPositions();
 				ArrayList<String> selectedImageNameList = new ArrayList<String>();
+				ArrayList<Bitmap> bit = new ArrayList<Bitmap>();
 				if (checkedItems != null) {
 					for (int i = 0; i < checkedItems.size(); i++) {
 						if (checkedItems.valueAt(i)) {
@@ -202,7 +213,8 @@ public class Snappit extends Activity implements OnClickListener {
 							// thumbnails.getAdapter().getIma(checkedItems.keyAt(i)).toString();
 							String img = image_urls.get(checkedItems.keyAt(i))
 									.toString();
-							img = img.substring(img.lastIndexOf("/") + 1);
+							bit.add(allImages.get(checkedItems.keyAt(i)));
+//							img = img.substring(img.lastIndexOf("/") + 1);
 							selectedImageNameList.add(img);
 
 						}
@@ -211,12 +223,38 @@ public class Snappit extends Activity implements OnClickListener {
 
 				switch (item.getItemId()) {
 				case R.id.action_delete:
-
-					DialogFragment deleteImagesFragment = AlertDialogFragment
-							.newInstance("Delete " + numberOfImagesSelected
-									+ " images", R.layout.delete_image_dialog,
-									selectedImageNameList);
-					deleteImagesFragment.show(getFragmentManager(), "dialog");
+					Log.i("BEFORE:", image_urls.toString());
+					for(String img : selectedImageNameList){
+						image_urls.remove(img);
+					}
+					for(Bitmap img : bit){
+						allImages.remove(img);
+					}
+					
+					Log.i("AFTER:", image_urls.toString());
+//					DialogFragment deleteImagesFragment = AlertDialogFragment
+//							.newInstance("Delete " + numberOfImagesSelected
+//									+ " images", R.layout.delete_image_dialog,
+//									selectedImageNameList);
+//					deleteImagesFragment.show(getFragmentManager(), "dialog");
+					
+//					if (checkedItems != null) {
+//						for (int i = 0; i < checkedItems.size(); i++) {
+//							if (checkedItems.valueAt(i)) {
+//								Log.i("POSITION DELETING:", checkedItems.keyAt(i)+"");
+////								image_urls.remove(checkedItems.keyAt(i));
+//								
+////								thumbsAdapter.remove(checkedItems.keyAt(i));
+//							}
+//						}
+//					}
+					
+//					ThumbnailAdapter ad = (ThumbnailAdapter) thumbnails.getAdapter();
+//										
+//					ad.remove(1);
+//					ad.notifyDataSetChanged();
+					ThumbnailAdapter a = (ThumbnailAdapter) thumbnails.getAdapter();
+					a.notifyDataSetChanged();
 					mode.finish();
 					return true;
 
@@ -329,7 +367,7 @@ public class Snappit extends Activity implements OnClickListener {
 
 					// Image captured and saved to fileUri specified in the
 					// Intent
-					Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT)
+					Toast.makeText(this, "Image saved successfully to the phone", Toast.LENGTH_SHORT)
 							.show();
 					// Toast.makeText(this, "Image saved to:\n" +
 					// data.getData(), Toast.LENGTH_LONG).show();
@@ -489,7 +527,7 @@ public class Snappit extends Activity implements OnClickListener {
 			// dismiss the dialog once done
 			pDialog.dismiss();
 			Toast toast = Toast.makeText(getApplicationContext(),
-					"Image added Successfully!", Toast.LENGTH_SHORT);
+					"Image uploaded successfully to the cloud", Toast.LENGTH_SHORT);
 			toast.show();
 			new DisplayImages().execute();
 			runOnUiThread(new Runnable() {
