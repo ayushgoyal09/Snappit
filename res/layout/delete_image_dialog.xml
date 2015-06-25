@@ -10,7 +10,7 @@
         android:layout_centerVertical="true"
         android:padding="10dp"
         android:gravity="center"
-        android:text="Are you sure  you want to delete the selected images? Images will be deleted from the server. Local data will not be altered."
+        android:text="Are you sure  you want to delete the selected images? Images will be deleted from the server. Images will not be deleted on the phone."
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

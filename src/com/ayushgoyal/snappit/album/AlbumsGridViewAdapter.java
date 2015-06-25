@@ -140,8 +140,8 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 			@Override
 			public void onClick(View v) {
 				ImageItem item = (ImageItem) data.get(position);
-				Toast.makeText(context, "You Selected the Album: " + position,
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "You Selected the Album: " + item.getTitle(),
+						Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent(context, Snappit.class);
 				intent.putExtra("position", position);
 				intent.putExtra("album", item.getTitle());

@@ -10,7 +10,7 @@
         android:layout_centerVertical="true"
         android:padding="10dp"
         android:gravity="center"
-        android:text="Are you sure  you want to delete this album? All pictures in the album will also be deleted from the server. Local data will not be altered."
+        android:text="Are you sure you want to delete this album and its pictures from the server? You can still access the album on your phone."
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

@@ -13,21 +13,36 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="Snap It!" />
+        android:text="Take Picture" />
+    
+   	<TextView
+        android:id="@+id/my_albums_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="My Album"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:textAlignment="center"/>
 
     <GridView
         android:id="@+id/image_grid"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@id/camera_button"
+        android:layout_below="@id/my_albums_textview"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:columnWidth="90dp"
         android:gravity="center"
         android:horizontalSpacing="10dp"
         android:numColumns="auto_fit"
+        android:paddingTop="15dp"
+        android:paddingBottom="10dp"
         android:stretchMode="columnWidth"
         android:verticalSpacing="10dp" >
+
     </GridView>
+
+    
 
 </RelativeLayout>

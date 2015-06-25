@@ -10,7 +10,7 @@
         android:layout_centerVertical="true"
         android:padding="10dp"
         android:gravity="center"
-        android:text="Are you sure  you want to sync files to Server. This may take some time depending on the internet connection speed, the size and number of images"
+        android:text="Are you sure you want to upload the missing images to the server? This may take some time depending on the internet connection speed, the size and number of images"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

@@ -8,10 +8,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ayushgoyal.snappit.album.Albums;
-import com.ayushgoyal.snappit.beans.UserBean;
-import com.ayushgoyal.snappit.util.Constants;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -23,9 +19,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.ayushgoyal.snappit.album.Albums;
+import com.ayushgoyal.snappit.beans.UserBean;
+import com.ayushgoyal.snappit.util.Constants;
+import com.ayushgoyal.snappit.util.EmailValidator;
+
 public class Signup extends Activity implements OnClickListener {
 
-	private static final String URL = "http://www.ayushgoyal09.com/webservice/add_user.php";
+	private static final String URL = "http://www.ayushgoyal09.com/webservice/add_user2.php";
 	private EditText username, password, confirmPassword, email;
 	String user = "", pass = "", confirmPass = "", emailAddress = "";
 	Button signUpButton;
@@ -67,6 +68,19 @@ public class Signup extends Activity implements OnClickListener {
 		pass = password.getText().toString();
 		emailAddress = email.getText().toString();
 		confirmPass = confirmPassword.getText().toString();
+		if(user.length()>30){
+			Toast.makeText(getApplicationContext(),
+					"The username cannot be more than 30 characters", Toast.LENGTH_SHORT).show();
+			return false;
+		}
+		
+		if(pass.length()>30){
+			Toast.makeText(getApplicationContext(),
+					"The password cannot be more than 30 characters", Toast.LENGTH_SHORT).show();
+			return false;
+		}
+		
+		
 		if (user.equals("") || pass.equals("") || confirmPass.equals("")
 				|| emailAddress.equals("")) {
 			Toast.makeText(getApplicationContext(),
@@ -77,6 +91,13 @@ public class Signup extends Activity implements OnClickListener {
 		if (!pass.equals(confirmPass)) {
 			Toast.makeText(getApplicationContext(),
 					"The two passwords do not match", Toast.LENGTH_SHORT)
+					.show();
+			return false;
+		}
+		
+		if(!new EmailValidator().validate(emailAddress)){
+			Toast.makeText(getApplicationContext(),
+					"Invalid Email Address", Toast.LENGTH_SHORT)
 					.show();
 			return false;
 		}

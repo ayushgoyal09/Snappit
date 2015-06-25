@@ -10,7 +10,7 @@
         android:layout_centerVertical="true"
         android:padding="10dp"
         android:gravity="center"
-        android:text="Are you sure  you want to download missing images to your phone? This may take some time depending on the internet connection speed, the size and number of images"
+        android:text="Are you sure you want to download missing images to your phone? This may take some time depending on the internet connection speed, the size and number of images"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

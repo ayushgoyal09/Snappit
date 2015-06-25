@@ -18,5 +18,17 @@
         android:icon="@drawable/ic_action_sort"
         android:title="@string/sort"
         android:showAsAction="ifRoom"/>
+    
+    <item 
+        android:id="@+id/action_sync_down"
+        android:icon="@drawable/ic_cloud_download_white_48dp"
+        android:title="Download Images from Server"
+        android:showAsAction="ifRoom"/>
+    
+    <item 
+        android:id="@+id/action_sync_up"
+        android:icon="@drawable/ic_cloud_upload_white_48dp"
+        android:title="Upload Images to the Server"
+        android:showAsAction="ifRoom"/>
 
 </menu>

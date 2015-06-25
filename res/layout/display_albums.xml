@@ -4,6 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+     <TextView
+        android:id="@+id/my_albums_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="My Albums"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
     <GridView
         android:id="@+id/albums_grid"
         android:layout_width="fill_parent"
@@ -13,7 +23,18 @@
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         android:verticalSpacing="10dp"
-        android:clickable="true">
+        android:layout_below="@id/my_albums_textview"
+        android:clickable="true"
+        android:paddingTop="20dp">
     </GridView>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/my_albums_textview"
+        android:layout_centerHorizontal="true"
+        android:text="View, Add or Sync Albums"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>
