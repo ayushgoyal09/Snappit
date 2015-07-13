@@ -97,7 +97,7 @@ public class AlertDialogFragment extends DialogFragment {
 
 		return new AlertDialog.Builder(getActivity())
 				.setView(view)
-				.setIcon(R.drawable.ic_add_album)
+				.setIcon(R.drawable.new_album)
 				.setTitle(title)
 				.setPositiveButton(R.string.alert_dialog_ok,
 						new OnClickListener() {
