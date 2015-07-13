@@ -125,7 +125,7 @@ public class Snappit extends Activity implements OnClickListener {
 				// mode.finish();
 				// return true;
 
-			case R.id.action_edit:
+//			case R.id.action_edit:
 				// Log.i("SELECTED ITEM:", selectedItem.getTitle());
 				// Constants.RENAME_ITEM = selectedItem.getTitle();
 				// Log.i("RENAME ITEM:", selectedItem.getTitle());
@@ -142,8 +142,8 @@ public class Snappit extends Activity implements OnClickListener {
 				// names.add(bean.getName());
 				// }
 				// Log.i("ALBUMS LIST GLOBAL:", names.toString());
-				mode.finish();
-				return true;
+//				mode.finish();
+//				return true;
 
 			default:
 				return false;
@@ -262,16 +262,16 @@ public class Snappit extends Activity implements OnClickListener {
 					
 					return true;
 
-				case R.id.action_edit:
-
-					DialogFragment moveImagesFragment = AlertDialogFragment
-							.newInstance("Move " + numberOfImagesSelected
-									+ " images", R.layout.move_images_dialog,
-									selectedImageNameList);
-					moveImagesFragment.show(getFragmentManager(), "dialog");
-
-					mode.finish();
-					return true;
+//				case R.id.action_edit:
+//
+//					DialogFragment moveImagesFragment = AlertDialogFragment
+//							.newInstance("Move " + numberOfImagesSelected
+//									+ " images", R.layout.move_images_dialog,
+//									selectedImageNameList);
+//					moveImagesFragment.show(getFragmentManager(), "dialog");
+//
+//					mode.finish();
+//					return true;
 				}
 				return false;
 			}

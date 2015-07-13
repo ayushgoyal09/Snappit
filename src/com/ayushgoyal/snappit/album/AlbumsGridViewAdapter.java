@@ -75,22 +75,22 @@ public class AlbumsGridViewAdapter extends ArrayAdapter {
 				mode.finish();
 				return true;
 				
-			case R.id.action_edit:
-				Log.i("SELECTED ITEM:", selectedItem.getTitle());
-				Constants.RENAME_ITEM = selectedItem.getTitle();
-				Log.i("RENAME ITEM:", selectedItem.getTitle());
-				DialogFragment newFragment = AlertDialogFragment.newInstance("Rename Album", R.layout.rename_album_dialog);
-				newFragment.show(albumActivity.getFragmentManager(), "dialog");
-//				break;
-				
-//				new RenameAlbum().execute(selectedItem.getTitle(),"renamed");
-//				ArrayList<String> names = new ArrayList<String>();
-//				for(AlbumBean bean: Constants.ALBUM_LIST){
-//					names.add(bean.getName());
-//				}
-//				Log.i("ALBUMS LIST GLOBAL:", names.toString());
-				mode.finish();
-				return true;
+//			case R.id.action_edit:
+//				Log.i("SELECTED ITEM:", selectedItem.getTitle());
+//				Constants.RENAME_ITEM = selectedItem.getTitle();
+//				Log.i("RENAME ITEM:", selectedItem.getTitle());
+//				DialogFragment newFragment = AlertDialogFragment.newInstance("Rename Album", R.layout.rename_album_dialog);
+//				newFragment.show(albumActivity.getFragmentManager(), "dialog");
+////				break;
+//				
+////				new RenameAlbum().execute(selectedItem.getTitle(),"renamed");
+////				ArrayList<String> names = new ArrayList<String>();
+////				for(AlbumBean bean: Constants.ALBUM_LIST){
+////					names.add(bean.getName());
+////				}
+////				Log.i("ALBUMS LIST GLOBAL:", names.toString());
+//				mode.finish();
+//				return true;
 
 			default:
 				return false;
