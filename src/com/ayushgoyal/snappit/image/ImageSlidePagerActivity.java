@@ -15,7 +15,7 @@ import com.ayushgoyal.snappit.Snappit;
 
 public class ImageSlidePagerActivity extends FragmentActivity{
 	
-	private static int NUM_PAGES = Snappit.allImages.size();
+	private static int NUM_PAGES;
 	private static int POSITION = 0;
 	
 	private ViewPager mPager;
@@ -26,6 +26,7 @@ public class ImageSlidePagerActivity extends FragmentActivity{
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		NUM_PAGES = Snappit.allImages.size();
 		setContentView(R.layout.image_slide);
 		mPager = (ViewPager) findViewById(R.id.pager);
 		mPagerAdapter = new ImageSlidePagerAdapter(getSupportFragmentManager());
@@ -33,6 +34,7 @@ public class ImageSlidePagerActivity extends FragmentActivity{
 		Intent intent = getIntent();
 		POSITION = intent.getIntExtra("position", -1);
 		mPager.setCurrentItem(POSITION);
+		
 		
 		
 	}
