@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -45,11 +46,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView.MultiChoiceModeListener;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -82,6 +80,7 @@ public class Snappit extends Activity implements OnClickListener {
 	private Uri fileUri;
 	public GridView thumbnails;
 	private Button takePictureButton;
+	public TextView numberOfImages;
 //	public static Bitmap testImage;
 	public static ArrayList<Bitmap> allImages = new ArrayList<Bitmap>();
 	ActionMode mActionMode;
@@ -171,6 +170,7 @@ public class Snappit extends Activity implements OnClickListener {
 		setContentView(R.layout.home_screen);
 		Log.i("size of images", "" + image_urls.size());
 		TextView headingText = (TextView) findViewById(R.id.my_albums_textview);
+		numberOfImages = (TextView) findViewById(R.id.textView1);
 		headingText.setText("Album - "+Constants.CURRENT_ALBUM);
 		thumbnails = (GridView) findViewById(R.id.image_grid);
 		takePictureButton = (Button) findViewById(R.id.camera_button);
@@ -223,7 +223,9 @@ public class Snappit extends Activity implements OnClickListener {
 
 				switch (item.getItemId()) {
 				case R.id.action_delete:
-					Log.i("BEFORE:", image_urls.toString());
+					String test = (String) numberOfImages.getText();
+					Log.i("BEFORE:", image_urls.toString()+test);					
+					
 					for(String img : selectedImageNameList){
 						image_urls.remove(img);
 					}
@@ -232,11 +234,12 @@ public class Snappit extends Activity implements OnClickListener {
 					}
 					
 					Log.i("AFTER:", image_urls.toString());
-//					DialogFragment deleteImagesFragment = AlertDialogFragment
-//							.newInstance("Delete " + numberOfImagesSelected
-//									+ " images", R.layout.delete_image_dialog,
-//									selectedImageNameList);
-//					deleteImagesFragment.show(getFragmentManager(), "dialog");
+					numberOfImages.setText(image_urls.size()+" Images");
+					DialogFragment deleteImagesFragment = AlertDialogFragment
+							.newInstance("Delete " + numberOfImagesSelected
+									+ " images", R.layout.delete_image_dialog,
+									selectedImageNameList);
+					deleteImagesFragment.show(getFragmentManager(), "dialog");
 					
 //					if (checkedItems != null) {
 //						for (int i = 0; i < checkedItems.size(); i++) {
@@ -254,8 +257,9 @@ public class Snappit extends Activity implements OnClickListener {
 //					ad.remove(1);
 //					ad.notifyDataSetChanged();
 					ThumbnailAdapter a = (ThumbnailAdapter) thumbnails.getAdapter();
-					a.notifyDataSetChanged();
-					mode.finish();
+					a.notifyDataSetChanged();					
+					mode.finish();										
+					
 					return true;
 
 				case R.id.action_edit:
@@ -580,6 +584,7 @@ public class Snappit extends Activity implements OnClickListener {
 				}
 				allImages.clear();
 				int i = 0;
+				publishProgress(image_urls.size()+"");
 				while (i < image_urls.size()) {
 
 					url = new URL(image_urls.get(i));
@@ -610,6 +615,13 @@ public class Snappit extends Activity implements OnClickListener {
 
 			return null;
 
+		}
+		
+		@Override
+		protected void onProgressUpdate(String... values) {
+			Log.i("Number of images:", values[0]);
+			numberOfImages.setText(values[0]+" Images");
+			
 		}
 
 		@Override

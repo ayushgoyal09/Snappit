@@ -27,6 +27,8 @@ public class DeleteImages extends AsyncTask<ArrayList<String>, Void, Integer>{
 		args.add(new BasicNameValuePair("username", Constants.currentUser.getUsername()));
 		args.add(new BasicNameValuePair("album", Constants.CURRENT_ALBUM));
 		for(String imageName : params[0]){
+			imageName = imageName.substring(imageName.lastIndexOf("/")+1);
+			Log.i("NAME:", imageName);
 			args.add(new BasicNameValuePair("images[]", imageName));
 		}
 		
