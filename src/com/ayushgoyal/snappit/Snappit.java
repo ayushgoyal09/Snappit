@@ -1,6 +1,9 @@
 package com.ayushgoyal.snappit;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -17,6 +20,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -31,6 +35,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -358,6 +363,7 @@ public class Snappit extends Activity implements OnClickListener {
 					Uri contentUri = Uri.fromFile(f);
 					mediaScanIntent.setData(contentUri);
 					this.sendBroadcast(mediaScanIntent);
+					compressImg(mCurrentPhotoPath);
 					ConnectionDetector cd = new ConnectionDetector(
 							getApplicationContext());
 					if (!cd.isConnectingToInternet()) {
@@ -388,6 +394,27 @@ public class Snappit extends Activity implements OnClickListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void compressImg(String mCurrentPhotoPath2) {
+		FileOutputStream fos = null;
+		try {
+		File f = new File(mCurrentPhotoPath2);
+		Bitmap bmp = BitmapFactory.decodeFile(mCurrentPhotoPath2);
+		fos = new FileOutputStream(mCurrentPhotoPath2);
+		bmp.compress(CompressFormat.JPEG, 50, fos);
+		} catch (Exception e) {
+		    e.printStackTrace();
+		} finally {
+		    try {
+		        if (fos != null) {
+		            fos.close();
+		        }
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }
+		}
+		
 	}
 
 	/** Create a file Uri for saving an image or video */
