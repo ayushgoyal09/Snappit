@@ -86,7 +86,8 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="19dp"
         android:layout_marginLeft="33dp"
-        android:text="SYNC UP" />
+        android:text="SYNC UP"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/sync_down"
@@ -96,6 +97,7 @@
         android:layout_alignBottom="@+id/sync_up"
         android:layout_alignParentRight="true"
         android:layout_marginRight="32dp"
-        android:text="SYNC DOWN" />
+        android:text="SYNC DOWN" 
+        android:visibility="gone"/>
 
 </RelativeLayout>
